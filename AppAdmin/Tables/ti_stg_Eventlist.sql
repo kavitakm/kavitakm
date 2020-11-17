@@ -1,0 +1,12 @@
+﻿CREATE TABLE [AppAdmin].[ti_stg_Eventlist](
+	[Event] [varchar](50) NULL,
+	[Module] [varchar](50) NULL,
+	[DataConsumer] [varchar](50) NULL,
+	[DataExplorer] [varchar](50) NULL,
+	[DataAnalyst] [varchar](50) NULL,
+	[Superuser] [varchar](50) NULL,
+	[eventgroup] [varchar](50) NULL,
+	[NeededforReco] [varchar](50) NULL,
+	[FirstEventinGroup] [varchar](50) NULL,
+	[LastEventINgroup] [varchar](50) NULL
+) ON [PRIMARY]

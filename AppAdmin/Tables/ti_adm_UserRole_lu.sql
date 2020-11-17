@@ -1,0 +1,9 @@
+﻿CREATE TABLE [AppAdmin].[ti_adm_UserRole_lu](
+	[RoleID] [int] NULL,
+	[UserID] [int] NULL,
+	[CreatedBy] [int] NULL,
+	[CreatedDate] [date] NULL,
+	[UpdatedBy] [int] NULL,
+	[UpdatedDate] [date] NULL,
+	[IsActive] [bit] NULL
+) ON [PRIMARY]
