@@ -28,18 +28,18 @@
 	[WeightedMean] [decimal](20, 2) NULL,
 	[HarmonicMean] [decimal](20, 2) NULL,
 	[QuadraticMean] [decimal](20, 2) NULL,
-	[Sum] [decimal](20, 2) NULL,
+	[Sum] [decimal](34, 2) NULL,
 	[Min] [decimal](20, 2) NULL,
 	[Max] [decimal](20, 2) NULL,
 	[SD] [decimal](20, 2) NULL,
-	[Variance] [decimal](20, 2) NULL,
+	[Variance] [decimal](34, 2) NULL,
 	[Correlation] [decimal](20, 2) NULL,
 	[CreatedDate] [datetime] NULL,
 	[CreatedBy] [int] NULL,
 	[LastUpdatedDate] [datetime] NULL,
 	[LastUpdatedBy] [int] NULL,
 	[IsActive] [bit] NULL,
-PRIMARY KEY NONCLUSTERED 
+    PRIMARY KEY NONCLUSTERED 
 (
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
