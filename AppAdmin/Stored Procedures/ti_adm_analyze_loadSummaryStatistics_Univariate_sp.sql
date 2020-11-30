@@ -1,8 +1,4 @@
-﻿--Exec [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Univariate_sp] 'Sandbox','tst_convert','cumulative','srimathi@tesserinsights.com'
-  
---EXEC AppAdmin.ti_adm_analyze_loadSummaryStatistics_Univariate_sp 'Sandbox','DimProduct_test','safetystocklevel','stock','sunitha.menni@fivepointfivesolutions.com'          
---select * from appadmin.ti_adm_SummaryStatistics          
-CREATE    PROC [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Univariate_sp]          
+﻿CREATE    PROC [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Univariate_sp]          
      @SchemaName VARCHAR(100),@TableName VARCHAR(100)          
      ,@ColumnName nVARCHAR(100),@AliasName VARCHAR(100),@UserEmail VARCHAR(100)          
 AS          
@@ -28,7 +24,8 @@ BEGIN
    08-Sep-2020					  Srimathi					  Enclose tablename within square brackets to allow table names starting with numbers and special characters
   07-oct-2020						Sunitha					  Enclose columnname  and AliasName with square brackets to allow column names with space
   05-Nov-2020						Srimathi				  Increase precision of decimal from 18 to 20 to handle bigint
-********************************************************************************/        
+  27-Nov-2020					  Srimathi					  Replaced temp1 to use column datatypes of ti_adm_SummaryStatistics to 
+  *******************************************************************************/        
  --SET NOCOUNT ON  
 BEGIN TRY  
   BEGIN TRANSACTION       
@@ -101,20 +98,37 @@ BEGIN
 --For the numerical datatype we populate all mean,median,mode etc ..        
  IF OBJECT_ID('tempdb.dbo.#Temp1') Is Not Null          
   DROP TABLE #Temp1          
- CREATE TABLE #Temp1( cnt  int          
+ SELECT 
+	[COUNT] as cnt
+	,Complete
+	,Missing
+	,NoOfUniqueValues
+	,Mean
+	,HarmonicMean
+	,QuadraticMean
+	,[Sum]
+	,[Min]
+	,[Max]
+	,SD
+	,Variance
+  INTO #Temp1
+  FROM [Appadmin].[ti_adm_SummaryStatistics]
+  where 1=2
+  --Replaced the below create table statement with select * into above
+ /*CREATE TABLE #Temp1( cnt  int          
       ,Complete int          
       ,Missing int          
       ,Noofuniquevalues int          
       ,Mean decimal(20,2)          
       ,HarmonicMean decimal(20,2)          
       ,QuadraticMean decimal(20,2)          
-      ,[Sum] decimal(20,2)          
+      ,[Sum] decimal(34,2)          
       ,[Min]  decimal(20,2)          
       ,[Max]  decimal(20,2)          
       ,SD  DEcimal(20,2)          
       ,Variance decimal(20,1)          
       )          
-          
+  */        
  SET @query = 'SELECT COUNT(*) Totalcount, COUNT(' + @ColumnName + ') AS non_nullcount, COUNT(*) - COUNT(' + @ColumnName + ') nullcount,  COUNT(DISTINCT ' + @ColumnName +') distinctcount, CONVERT(FLOAT, ROUND(AVG(CONVERT(FLOAT,'+@ColumnName+')),2)) Mean, CASE WHEN MIN(' + @ColumnName + ') > 0 THEN CONVERT(FLOAT, ROUND(1 / AVG(1 / (CASE ' + @ColumnName + ' WHEN 0 THEN NULL ELSE CONVERT(FLOAT,' + @ColumnName + ') END)),2)) ELSE NULL END  AS Harmonic_Mean, CONVERT(FLOAT, ROUND(POWER(AVG(POWER(CONVERT(FLOAT,' + @ColumnName  + '), 2)), 0.5),2)) AS Quadratic_Mean,  CONVERT(FLOAT, ROUND(SUM(CONVERT(FLOAT,' + @ColumnName + ')),2)) as [Sum], CONVERT(FLOAT, ROUND(MIN(CONVERT(FLOAT,' + @ColumnName + ')),2)) as [Min], CONVERT(FLOAT, ROUND(MAX(CONVERT(FLOAT,' + @ColumnName + ')),2)) as [Max], CONVERT(FLOAT, ROUND(STDEV(CONVERT(FLOAT,' + @ColumnName + ')),2)) as SD, CONVERT(FLOAT, ROUND(VAR(CONVERT(FLOAT,' + @ColumnName + ')),2)) as Variance   FROM ' + @schemaname + '.' + @tablename;            
           
  INSERT INTO #Temp1          
@@ -186,4 +200,5 @@ END TRY
   SET @ErrSeverity=ERROR_SEVERITY()  
   RAISERROR(@ErrMsg,@Errseverity,1)  
 END CATCH  
- END
+ END          
+GO

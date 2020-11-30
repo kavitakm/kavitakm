@@ -1,5 +1,4 @@
-﻿--exec [AppAdmin].[ti_Transform_TransformList_sp] '','','harini@TesserInsights.com'      
-CREATE Proc [AppAdmin].[ti_Transform_TransformList_sp]                            
+﻿CREATE Proc [AppAdmin].[ti_Transform_TransformList_sp]                            
  @SearchText varchar(100)      
 ,@InnerSearchText varchar(100)      
 --,@SchemaName varchar(30)      
@@ -15,6 +14,7 @@ BEGIN
   19-12-2019	sunitha		Added Audit Columns 
   02/19/2020	Dinesh		Added GrantCount in Select list
   11/06/2020	Srimathi	Duplicate transform entries fix - only the row corresponding to active target
+  11/30/2020	Srimathi	Added TargetObjectID in select clause
 *******************************************************************************/              
  Declare @UserID int;                  
   set @UserID = 0;                  
@@ -73,7 +73,7 @@ BEGIN
  
  SELECT a.TransformId, a.TransformName, a.OutputType, a.OutputName, a.SchemaName, a.CreatedDate, a.UserName, a.Notes,
  a.Location, a.[schema_ID], a.TransactionType, a.TobeValidated, a.CreatedBy, a.ModifiedBy, a.ModifiedDate, a.Favourite,
- a.IsOwnObject, a.[GrantCount], a.TAI_Enabled
+ a.IsOwnObject, a.[GrantCount], a.TAI_Enabled, a.Target_ObjectID
  FROM
  (
  Select             
@@ -100,6 +100,8 @@ BEGIN
   , 'True' as [IsOwnObject] 
   , (Select Count(*) from [AppAdmin].[ti_adm_ObjectAccessGrant] where isActive =1 And ObjectID = TOBJ.ObjectID) as [GrantCount]
   , obj.TAI_Enabled as TAI_Enabled
+  , obj.ObjectID as Target_ObjectID
+
  from [AppAdmin].[ti_adm_transform] T            
  INNER JOIN [AppAdmin].[ti_adm_ObjectOwner] Tobj on Tobj.Objectid = t.ObjectID and Tobj.ISActive =1 And Tobj.CreatedBy = @UserID            
  INNER JOIN [AppAdmin].[ti_adm_User_lu] U on TObj.CreatedBy = U.UserID and U.isactive =1            
@@ -147,6 +149,7 @@ BEGIN
   , 'False' as [IsOwnObject] 
   , (Select Count(*) from [AppAdmin].[ti_adm_ObjectAccessGrant] where isActive =1 And ObjectID = TOBJ.ObjectID) as [GrantCount]
   , obj.TAI_Enabled as TAI_Enabled
+  , obj.ObjectID as Target_ObjectID
  from [AppAdmin].[ti_adm_transform] T            
  INNER JOIN [AppAdmin].[ti_adm_ObjectOwner] Tobj on Tobj.Objectid = t.ObjectID and Tobj.ISActive =1 --And Tobj.CreatedBy = @UserID        
  INNER JOIN  [AppAdmin].[ti_adm_ObjectAccessGrant] GT on GT.ObjectID = Tobj.objectID and GT.Isactive=1 and GT.GrantToUser = @userid              
@@ -181,4 +184,4 @@ rn=1
 
 Order by a.TransformId desc                             
                              
-End
+End   
