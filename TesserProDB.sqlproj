@@ -195,6 +195,6 @@
     <Build Include="AppAdmin\Stored Procedures\ti_Transform_UpdateCleanseSourceTable_sp.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="Scripts\TesserProDB_1.PostDeployment.sql" />
+    <PostDeploy Include="Script.PostDeployment1.sql" />
   </ItemGroup>
 </Project>
