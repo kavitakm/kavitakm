@@ -1,12 +1,13 @@
-﻿--exec [AppAdmin].[ti_adm_favourite_sp] 
---'CPA_Accounting_Report','Report','','CPA','','Dinesh@tesserinsights.com',1
-CREATE   PROC [AppAdmin].[ti_adm_favourite_sp]	   @objectName	   VARCHAR(200), 
-   @ObjectType		 VARCHAR(100),
+﻿CREATE   PROC [AppAdmin].[ti_adm_favourite_sp]	   
+	@objectName	   VARCHAR(200), 
+    @ObjectType		 VARCHAR(100),
 	@SchemaName		 VARCHAR(50),	
 	@objectLocation  VARCHAR(200),
 	@FileExt		 VARCHAR(50),
 	@userEmail		 VARCHAR(100),
-	@favFlag		 BIT 
+	@favFlag		 BIT,
+	@Object_GUID	uniqueidentifier = null,
+	@Workspace_GUID uniqueidentifier = null
 AS             
 BEGIN        
 /******************************************************
@@ -14,6 +15,8 @@ BEGIN
 ** Author                : Sunitha        
 ** Description           : to update the favourites flag in objectowner and objectAccessGrant table        
 ** Date					 : 16-12-2019           
+
+04-DEC-2020	Srimathi	Added ObjectGUID and Workspace GUID in parameters and filter.  Added userid in filter of else
 *******************************************************/ 
 DECLARE @UserId INT
 DECLARE @OwnerofObject int
@@ -31,6 +34,9 @@ WHERE objecttype=@objecttype
 	AND (objectlocation=@objectlocation OR objectlocation IS NULL)
 	AND (FileExt=@FileExt OR FileExt IS NULL)
 	AND isActive=1
+	AND (Workspace_GUID = @Workspace_GUID OR Workspace_GUID is NULL)
+	AND (Object_GUID = @Object_GUID OR Object_GUID is NULL)
+
 --@OwnerofObject
 SELECT @OwnerofObject=CreatedBy
 FROM AppAdmin.ti_adm_ObjectOwner
@@ -53,6 +59,7 @@ ELSE
 		,LastUpdatedDate=getdate()
 	WHERE objectID=@objectID
 		AND IsActive=1
+		AND GrantToUser = @UserId
 END
 
-END
+END 
