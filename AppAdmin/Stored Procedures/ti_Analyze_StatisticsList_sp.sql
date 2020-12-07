@@ -1,4 +1,5 @@
-﻿--exec [AppAdmin].[ti_Analyze_StatisticsList_sp] '','','All','dinesh@tesserinsights.com'  
+﻿
+--exec [AppAdmin].[ti_Analyze_StatisticsList_sp] '','','All','sunitha@tesserinsights.com'  
 CREATE Proc [AppAdmin].[ti_Analyze_StatisticsList_sp]                    
 @SearchText varchar(100),  
 @InnerSearchText varchar(100),  
@@ -15,6 +16,7 @@ BEGIN
    19-12-2019  Sunitha   Added Audit Columns  
    28-02-2020  Srimathi  Added TAI_Enabled flag in select list  
    23-03-2020  Srimathi  Removed union and alternatively added a filter, added shared count in select list
+   02-12-2020   Sunitha  Added UserEmail in the where caluse to include ownername in searchText(Bug#552)
 *******************************************************************************/    
     
  DECLARE @UserID int  
@@ -54,7 +56,9 @@ BEGIN
     or S.Column2Name like '%' + @SearchText +'%'                  
     or S.Column3Name like '%' + @SearchText +'%'                  
     or S.Column4Name like '%' + @SearchText +'%'                  
-    or S.CreatedDate like '%' + @SearchText +'%'              
+    --or S.CreatedDate like '%' + @SearchText +'%'  
+	or S.LastUpdatedDate like '%' + @SearchText +'%'  
+	or U.userEmail like '%' + @SearchText +'%'  
     )))  
      
    AND ((Len(@InnerSearchText) =0 )   
@@ -64,7 +68,9 @@ BEGIN
    or S.Column2Name like '%' + @InnerSearchText +'%'                  
    or S.Column3Name like '%' + @InnerSearchText +'%'                  
    or S.Column4Name like '%' + @InnerSearchText +'%'                  
-   or S.CreatedDate like '%' + @InnerSearchText +'%'                
+   --or S.CreatedDate like '%' + @InnerSearchText +'%'   
+   or S.LastUpdatedDate like '%' + @InnerSearchText +'%'   
+    or U.userEmail like '%' + @InnerSearchText +'%'  
    )))  
   
    And (((Upper(@SchemaName) = 'ALL' AND 1=1 ) or ( Upper(@SchemaName) <> 'ALL' and  O.SchemaName = @SchemaName )))  
@@ -129,4 +135,7 @@ BEGIN
   ,O.TAI_Enabled   
                    
  */                 
-End
+End 
+GO
+
+

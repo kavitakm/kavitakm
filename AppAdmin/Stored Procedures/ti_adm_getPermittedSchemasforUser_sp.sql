@@ -1,6 +1,4 @@
-﻿--Exec [AppAdmin].[ti_adm_getPermittedSchemasforUser_sp_new] 'srimathi@tesserinsights.com','wr'
-
-CREATE PROCEDURE  [AppAdmin].[ti_adm_getPermittedSchemasforUser_sp]                   
+﻿CREATE PROCEDURE  [AppAdmin].[ti_adm_getPermittedSchemasforUser_sp]                   
 @UserEmail Varchar(150),
 @readWrite Varchar(10)--rd/wr
 AS
@@ -14,6 +12,7 @@ BEGIN
 **  
      ******* To be edited to allow impersonation after implementing MFA.  Uncomment the Execute as user and Revert statements ************
 04-mar-2020   Sunitha added the userschema 
+03-DEC-2020	  Srimathi	Removed EnterpriseData and User Schema from default schema list, to treat all schemas other than Sandbox as Enterprise Schema
 
 *******************************************************************************/ 
 Declare @User varchar(50);
@@ -22,7 +21,8 @@ Select @User=substring(@userEmail,0,charindex('@',@userEmail))
 --Default schemas
 Select Name as schemaName, SCHEMA_ID(Name) SchemaID
 From Sys.schemas 
-Where Name in (@User,'sandbox','EnterpriseData')
+--Where Name in (@User,'sandbox','EnterpriseData')   Commented on 03-Dec-2020 by Srimathi to treat all schemas other than Sandbox as Enterprise Schema
+WHERE Name = 'Sandbox'
 
 Union
 --user object related schemas
