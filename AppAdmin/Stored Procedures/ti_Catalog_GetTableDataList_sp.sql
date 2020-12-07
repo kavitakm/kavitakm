@@ -1,4 +1,6 @@
-﻿----exec [AppAdmin].[ti_Catalog_GetTableDataList_sp] 1,10,'Sandbox','Border_Crossing_Data','3422','ALL'
+﻿/****** Object:  StoredProcedure [AppAdmin].[ti_Catalog_GetTableDataList_sp]    Script Date: 01-12-2020 17:45:16 ******/
+
+----exec [AppAdmin].[ti_Catalog_GetTableDataList_sp] 1,10,'Sandbox','Border_Crossing_Data','3422','ALL'
 --exec [AppAdmin].[ti_Catalog_GetTableDataList_sp] 1,10,'Sandbox','Border_Crossing_Data','','ALL'
 
 CREATE PROC [AppAdmin].[ti_Catalog_GetTableDataList_sp]				@PageNumber int =1,    
@@ -57,7 +59,7 @@ BEGIN
 END    
 
 --Set @RCountquery =N'Select Count(*) from [' + @schemaName + '].['+ @TableName +'] ;'    
-Set @query = N'SELECT count(*) over() ct,*  FROM [' + @schemaName + '].['+ @TableName +'] ORDER BY 1  OFFSET ' + CONVERT(VARCHAR,@PageSize) +' * ( ' +CONVERT(VARCHAR,@PageNumber) +' - 1) ROWS FETCH NEXT ' + CONVERT(VARCHAR,@PageSize) + ' ROWS ONLY;' 
+Set @query = N'SELECT count(*) over() ct,*  FROM [' + @schemaName + '].['+ @TableName +'] ORDER BY (SELECT NULL)  OFFSET ' + CONVERT(VARCHAR,@PageSize) +' * ( ' +CONVERT(VARCHAR,@PageNumber) +' - 1) ROWS FETCH NEXT ' + CONVERT(VARCHAR,@PageSize) + ' ROWS ONLY;' 
 if len(@sql)=0
 	SELECT @SQL='1=1'
 --print @query  
@@ -66,7 +68,7 @@ BEGIN
 	--set @sql=@sql+ '1=1' 
 	--Set @RCountquery =N'SELECT COUNT(*) FROM [' + @schemaName + '].['+ @TableName +'] WHERE ' + @sql  + ' ;'
 	 
-	Set @query = N'SELECT count(*) over() ct, *  FROM [' + @schemaName + '].['+ @TableName +'] WHERE ' + @sql  +' ORDER BY 1  OFFSET ' + CONVERT(VARCHAR,@PageSize) +' * ( ' + CONVERT(VARCHAR,@PageNumber) +' - 1) ROWS FETCH NEXT ' + CONVERT(VARCHAR,@PageSize) + ' ROWS ONLY;'    
+	Set @query = N'SELECT count(*) over() ct, *  FROM [' + @schemaName + '].['+ @TableName +'] WHERE ' + @sql  +' ORDER BY (SELECT NULL)  OFFSET ' + CONVERT(VARCHAR,@PageSize) +' * ( ' + CONVERT(VARCHAR,@PageNumber) +' - 1) ROWS FETCH NEXT ' + CONVERT(VARCHAR,@PageSize) + ' ROWS ONLY;'    
 END      
 
 --select 'After query generation: ' + convert(varchar(30),getdate(),9);
@@ -77,4 +79,7 @@ END
  Execute sp_executesql @query;      
  --select 'End: ' + convert(varchar(30),getdate(),9);
                
-End
+End 
+
+
+
