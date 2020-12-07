@@ -192,5 +192,9 @@
     <Build Include="AppAdmin\User Defined Types\WorkspaceUsers.sql" />
     <Build Include="Security\AppAdmin.sql" />
     <None Include="Scripts\ScriptsIgnoredOnImport.sql" />
+    <Build Include="AppAdmin\Stored Procedures\ti_Transform_UpdateCleanseSourceTable_sp.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\TesserProDB_1.PostDeployment.sql" />
   </ItemGroup>
 </Project>

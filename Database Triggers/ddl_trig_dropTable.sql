@@ -1,8 +1,11 @@
-﻿create TRIGGER [ddl_trig_dropTable]   
+﻿CREATE TRIGGER [ddl_trig_dropTable]   
 ON DATABASE
 FOR DROP_TABLE 
 AS  
 BEGIN
+/*
+02-DEC-2020	Srimathi	Removed Sandbox check in IF - to handle backend deletion of tables in sandbox
+*/
 DECLARE @id int;
 DECLARE @objectID int;
 DECLARE @tblname VARCHAR(100);
@@ -14,7 +17,7 @@ DECLARE @schmname VARCHAR(100);
 	SELECT @ObjectID = ObjectID FROM [AppAdmin].[ti_adm_ObjectOwner] WHERE ISNULL(SchemaName,'') = @SchmName AND ObjectName = @tblName and objectType = 'TABLE' AND IsActive = 1  ;
 		
 	--insert into sandbox.test values(1,EVENTDATA().value('(/EVENT_INSTANCE/LoginName)[1]','varchar(max)'));
-    IF @ObjectID is not null and EVENTDATA().value('(/EVENT_INSTANCE/ObjectType)[1]','nvarchar(max)') = 'TABLE' AND EVENTDATA().value('(/EVENT_INSTANCE/SchemaName)[1]','nvarchar(max)') not in ('DBO','GUEST','INFORMATION_SCHEMA','SYS','APPADMIN','SANDBOX','INCORPTAX','BRIGHTWING')
+    IF @ObjectID is not null and EVENTDATA().value('(/EVENT_INSTANCE/ObjectType)[1]','nvarchar(max)') = 'TABLE' AND EVENTDATA().value('(/EVENT_INSTANCE/SchemaName)[1]','nvarchar(max)') not in ('DBO','GUEST','INFORMATION_SCHEMA','SYS','APPADMIN','INCORPTAX','BRIGHTWING')
 	BEGIN
 		UPDATE APPADMIN.TI_ADM_TRANSFORM SET to_be_validated = 1 FROM appadmin.ti_adm_ObjectOwner o WHERE TI_ADM_TRANSFORM.ObjectId = o.ObjectID AND o.isactive = 1 AND CHARINDEX(@tblname, transformquery) > 0;
 				
@@ -29,10 +32,9 @@ DECLARE @schmname VARCHAR(100);
 		DELETE APPADMIN.ti_adm_ObjectOwner WHERE SChemaname = @schmname and objectname = @tblname and objecttype ='TABLE';
 
 	END
-END
+END	
 GO
-
 DISABLE TRIGGER [ddl_trig_dropTable] ON DATABASE
 GO
-
 ENABLE TRIGGER [ddl_trig_dropTable] ON DATABASE
+GO

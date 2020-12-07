@@ -1,4 +1,6 @@
-﻿CREATE Proc [AppAdmin].[ti_Transform_TransformList_sp]                            
+﻿
+--exec [AppAdmin].[ti_Transform_TransformList_sp] '','','harini@TesserInsights.com'      
+CREATE Proc [AppAdmin].[ti_Transform_TransformList_sp]                            
  @SearchText varchar(100)      
 ,@InnerSearchText varchar(100)      
 --,@SchemaName varchar(30)      
@@ -15,6 +17,7 @@ BEGIN
   02/19/2020	Dinesh		Added GrantCount in Select list
   11/06/2020	Srimathi	Duplicate transform entries fix - only the row corresponding to active target
   11/30/2020	Srimathi	Added TargetObjectID in select clause
+  12/2/2020     Sunitha     modified the created Date column with LastUpdatedDate in the Where Clause  filter(Bug#552)
 *******************************************************************************/              
  Declare @UserID int;                  
   set @UserID = 0;                  
@@ -113,7 +116,8 @@ BEGIN
    or obj.SchemaName like '%' + @SearchText +'%'                      
    or T.Notes like '%' + @SearchText +'%'                      
    or U.userEmail like '%' + @SearchText +'%'                      
-   or tObj.createddate like '%' + @SearchText +'%'                    
+   --or tObj.createddate like '%' + @SearchText +'%'                    
+   or tObj.LastUpdatedDate like '%' + @SearchText +'%'    
    or Tobj.ObjectType like '%' + @SearchText +'%')))      
          
    AND ((Len(@InnerSearchText) =0   ) OR (Len(@InnerSearchText) >0 and ( T.TransformName like '%' + @InnerSearchText +'%' or Obj.ObjectType like '%' + @InnerSearchText +'%'                      
@@ -121,7 +125,8 @@ BEGIN
    or obj.SchemaName like '%' + @InnerSearchText +'%'                      
    or T.Notes like '%' + @InnerSearchText +'%'                      
    or U.userEmail like '%' + @InnerSearchText +'%'                      
-   or tObj.createddate like '%' + @InnerSearchText +'%'                    
+   --or tObj.createddate like '%' + @InnerSearchText +'%'                    
+   or tObj.LastUpdatedDate like '%' + @InnerSearchText +'%'    
    or Tobj.ObjectType like '%' + @InnerSearchText +'%')))      
       
    --AND ((Upper(@SchemaName) = 'ALL' ) OR ( Upper(@SchemaName) <> 'ALL' AND  obj.SchemaName = @SchemaName ))      
@@ -162,7 +167,8 @@ BEGIN
    or obj.SchemaName like '%' + @SearchText +'%'                    
    or T.Notes like '%' + @SearchText +'%'                      
    or U.userEmail like '%' + @SearchText +'%'                      
-   or tObj.createddate like '%' + @SearchText +'%'                    
+   --or tObj.createddate like '%' + @SearchText +'%'                    
+   or tObj.LastUpdatedDate like '%' + @SearchText +'%'    
    or Tobj.ObjectType like '%' + @SearchText +'%')))      
          
    AND ((Len(@InnerSearchText) =0  ) OR (Len(@InnerSearchText) >0 and ( T.TransformName like '%' + @InnerSearchText +'%' or Obj.ObjectType like '%' + @InnerSearchText +'%'                      
@@ -170,7 +176,8 @@ BEGIN
    or obj.SchemaName like '%' + @InnerSearchText +'%'                      
    or T.Notes like '%' + @InnerSearchText +'%'                      
    or U.userEmail like '%' + @InnerSearchText +'%'                      
-   or tObj.createddate like '%' + @InnerSearchText +'%'                    
+   --or tObj.createddate like '%' + @InnerSearchText +'%'                    
+   or tObj.LastUpdatedDate like '%' + @InnerSearchText +'%'    
    or Tobj.ObjectType like '%' + @InnerSearchText +'%')))      
         
    --and ((Upper(@SchemaName) = 'ALL'  ) or ( Upper(@SchemaName) <> 'ALL' and  obj.SchemaName = @SchemaName ))      
@@ -185,3 +192,6 @@ rn=1
 Order by a.TransformId desc                             
                              
 End   
+GO
+
+
