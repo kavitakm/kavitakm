@@ -1,5 +1,4 @@
-﻿
---exec [AppAdmin].[ti_Catalog_ListTableObjects_sp_old] '','','ALL','dinesh@tesserinsights.com'        
+﻿--exec [AppAdmin].[ti_Catalog_ListTableObjects_sp_old] '','','ALL','dinesh@tesserinsights.com'        
 --exec [AppAdmin].[ti_Catalog_ListTableObjects_sp] '','','ALL','dinesh@tesserinsights.com'        
     
      
@@ -20,7 +19,6 @@ BEGIN
  Srimathi 09-01-2020 Changed Row count logic to fetch from system table    
  Srimathi 28-02-2020 added TAI_Enabled flag in select list  
  Srimathi 10-03-2020 Added masked columns count, removed union all to improve performance
- Sunitha 02-12-2020	  Added Search Filters in where clause Bug#552
 *******************************************************************************/            
             
 DECLARE @userid int;          
@@ -85,25 +83,9 @@ DECLARE @userid int;
  (obj.objectid in (select objectid from appadmin.ti_adm_ObjectAccessGrant where GrantToUser = @userid and isactive = 1)
  or
  obj.createdby = @userid) 
- and ((Len(@SearchText) = 0 ) OR (Len(@SearchText) > 0 
- and ( OBJ.ObjectName like '%' + @SearchText +'%' 
-	or OBJ.LastUpdatedDate like '%' + @SearchText +'%' 
-	or CBy.UserEmail like '%' + @SearchText +'%'
-	or lt.LoadTypeName like '%' + @SearchText +'%' 
-	or obj.SchemaName like '%' + @SearchText +'%' )))      
-  AND ((Len(@InnerSearchText) =0 )  OR (Len(@InnerSearchText) >0 and 
-  ( OBJ.ObjectName like '%' + @InnerSearchText +'%'
-    or OBJ.LastUpdatedDate like '%' + @InnerSearchText +'%' 
-	or CBy.UserEmail like '%' + @InnerSearchText +'%' 
-	or lt.LoadTypeName like '%' + @InnerSearchText +'%' 
-	or obj.SchemaName like '%' + @InnerSearchText +'%' 
-  )))      
+ and ((Len(@SearchText) = 0 ) OR (Len(@SearchText) > 0 and ( OBJ.ObjectName like '%' + @SearchText +'%' )))      
+  AND ((Len(@InnerSearchText) =0 )  OR (Len(@InnerSearchText) >0 and ( OBJ.ObjectName like '%' + @InnerSearchText +'%')))      
   AND (((Upper(@SchemaName) = 'ALL') or ( Upper(@SchemaName) <> 'ALL' and  OBJ.SchemaName = @SchemaName )))      
        
                        
-End       
-      
-       
-GO
-
-
+End

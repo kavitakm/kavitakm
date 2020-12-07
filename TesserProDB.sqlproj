@@ -193,7 +193,4 @@
     <Build Include="Security\AppAdmin.sql" />
     <None Include="Scripts\ScriptsIgnoredOnImport.sql" />
   </ItemGroup>
-  <ItemGroup>
-    <PostDeploy Include="Scripts\TesserProDBPostDeploy.sql" />
-  </ItemGroup>
 </Project>

@@ -1,5 +1,4 @@
-﻿
---exec [AppAdmin].[ti_Visualize_ListObjects_sp] 'Report','','','dinesh@tesserinsights.com'    
+﻿--exec [AppAdmin].[ti_Visualize_ListObjects_sp] 'Report','','','dinesh@tesserinsights.com'    
 
  
 CREATE PROC [AppAdmin].[ti_Visualize_ListObjects_sp]            
@@ -17,7 +16,6 @@ BEGIN
 
 10-AUG-2020 - Added GUID of report and workspace in SELECT
 21-Sep-2020	Srimathi	Added EditAccess column in output
-02-12-2020	 Sunitha   Added Search Filters in where clause Bug#552
 
  ******************************************************************************/        
         
@@ -47,17 +45,8 @@ DECLARE @userid int;
 		OBJ.objectType = @ObjectType
 		AND OBJ.ISactive = 1 
 		AND obj.CreatedBy = @userid       
- 		AND ((Len(@SearchText) = 0 ) OR (Len(@SearchText) > 0 and ( OBJ.ObjectName like '%' + @SearchText +'%' 
-		or OBJ.ObjectLocation like '%' + @SearchText +'%' 
-		or CBy.UserEmail like '%' + @SearchText +'%' 
-		or OBJ.LastUpdatedDate like '%' + @SearchText +'%' 
-
-		)))  
-		AND ((Len(@InnerSearchText) =0 )  OR (Len(@InnerSearchText) >0 and ( OBJ.ObjectName like '%' + @InnerSearchText +'%'
-		or OBJ.ObjectLocation like '%' + @InnerSearchText +'%' 
-		or CBy.UserEmail like '%' + @InnerSearchText +'%' 
-		or OBJ.LastUpdatedDate like '%' + @InnerSearchText +'%' 
-		)))  
+ 		AND ((Len(@SearchText) = 0 ) OR (Len(@SearchText) > 0 and ( OBJ.ObjectName like '%' + @SearchText +'%' )))  
+		AND ((Len(@InnerSearchText) =0 )  OR (Len(@InnerSearchText) >0 and ( OBJ.ObjectName like '%' + @InnerSearchText +'%')))  
    
   Union all  
   
@@ -84,19 +73,7 @@ DECLARE @userid int;
   WHERE   
 	OBJ.objectType = @ObjectType 
 	AND OBJ.ISactive = 1        
-	AND ((Len(@SearchText) = 0 ) OR (Len(@SearchText) > 0 and ( OBJ.ObjectName like '%' + @SearchText +'%'
-	or OBJ.ObjectLocation like '%' + @SearchText +'%' 
-		or CBy.UserEmail like '%' + @SearchText +'%' 
-		or OBJ.LastUpdatedDate like '%' + @SearchText +'%' 
-	)))  
-	AND ((Len(@InnerSearchText) =0 )  OR (Len(@InnerSearchText) >0 and ( OBJ.ObjectName like '%' + @InnerSearchText +'%'
-	or OBJ.ObjectLocation like '%' + @InnerSearchText +'%' 
-		or CBy.UserEmail like '%' + @InnerSearchText +'%' 
-		or OBJ.LastUpdatedDate like '%' + @InnerSearchText +'%' 
-	)))  
+	AND ((Len(@SearchText) = 0 ) OR (Len(@SearchText) > 0 and ( OBJ.ObjectName like '%' + @SearchText +'%' )))  
+	AND ((Len(@InnerSearchText) =0 )  OR (Len(@InnerSearchText) >0 and ( OBJ.ObjectName like '%' + @InnerSearchText +'%')))  
              
-End   
-   
-GO
-
-
+End

@@ -1,4 +1,5 @@
-﻿CREATE   PROCEDURE [AppAdmin].[ti_Analyze_Predict_sp]      
+﻿--exec [AppAdmin].[ti_Analyze_Predict_sp] 'Sandbox' ,'RentData_trainingset',7,'dinesh@fivepointfivesolutions.com'  
+CREATE   PROCEDURE [AppAdmin].[ti_Analyze_Predict_sp]      
 @SchemaName varchar(100),        
 @TableName varchar(100),  
 @modelid int,  
@@ -16,7 +17,6 @@ Change History
 
 Date		Author		Change
 04/06/2020	Srimathi	Changed Prediction column - decimal precision 2 in place of 6
-03/12/2020	Srimathi	Enclosed variable name in query with square brackets to handle column names with spaces
 *******************************************************************************/
 --SET NOCOUNT ON
 BEGIN TRY
@@ -80,7 +80,7 @@ DECLARE @endofprevcoeff int;
   
  SELECT @depcol = replace(replace([D],'[',''),']',''), @eqn = [I] + '+' + replace([N],'intercept','')   
   FROM  
-(SELECT isnull(dep_ind_flag,'N') dep_ind_flag, string_agg(isnull(cast(convert(float,coefficient) as varchar(24)),'')+ case when dep_ind_flag = 'I' then '*[' + variable +']' when dep_ind_flag='D' then '['+variable+']' else '' end ,'+') within group(order by variable) as
+(SELECT isnull(dep_ind_flag,'N') dep_ind_flag, string_agg(isnull(cast(convert(float,coefficient) as varchar(24)),'')+ case when dep_ind_flag = 'I' then '*' + variable when dep_ind_flag='D' then variable else '' end ,'+') within group(order by variable) as
  eqn  
   FROM appadmin.ti_adm_regressionmodels where modelid = @modelid group by dep_ind_flag) AS SourceTable    
   PIVOT    
@@ -110,4 +110,4 @@ END TRY
   SET @ErrSeverity=ERROR_SEVERITY()
   RAISERROR(@ErrMsg,@Errseverity,1)
 END CATCH    
-END  
+END
