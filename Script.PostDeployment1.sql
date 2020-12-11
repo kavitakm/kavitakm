@@ -9,5 +9,3 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
-DROP PROCEDURE [AppAdmin].[ti_Transform_UpdateCleanseSourceTable_sp]
-GO
