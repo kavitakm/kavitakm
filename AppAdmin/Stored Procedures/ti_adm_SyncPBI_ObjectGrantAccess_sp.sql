@@ -1,5 +1,4 @@
-﻿--exec proc [AppAdmin].[ti_adm_SyncPBI_ObjectGrantAccess_sp]  
-CREATE  PROC [AppAdmin].[ti_adm_SyncPBI_ObjectGrantAccess_sp]  
+﻿CREATE  PROC [AppAdmin].[ti_adm_SyncPBI_ObjectGrantAccess_sp]  
 @workspaceUsersList appadmin.WorkspaceUsers readonly
 
 AS  
@@ -14,6 +13,7 @@ BEGIN
 29-Sep-2020	Srimathi	Filter condition added to check if granttoUser is the owner or not.  Owner should not have an entry in GrantAccessTable
 21-oct-2020 Sunitha     Added Transaction to the Stored Proc
 04-DEC-2020	Srimathi	Replaced delete/insert with merge to retain favourite flag
+11-DEC-2020	Srimathi	Modified merge to modify only powerbi objects
 *******************************************************/ 
 BEGIN TRY  
   BEGIN TRANSACTION   
@@ -56,7 +56,10 @@ FROM
 		AND obj.objecttype in ('Dataset','Report','Dashboard')
 		AND ISNULL(obj.CreatedBy,-1) <> users.UserID		--owner of object should not be added in accessgrant table
 
-MERGE appadmin.ti_adm_objectaccessgrant AS TARGET
+MERGE 
+appadmin.ti_adm_objectaccessgrant 
+	
+as TARGET
 USING #objectGrantList AS SOURCE 
 ON (TARGET.Objectid = SOURCE.Objectid and TARGET.granttouser = SOURCE.granttouser) 
 --When records are matched, update the records if there is any change
@@ -66,7 +69,7 @@ ON (TARGET.Objectid = SOURCE.Objectid and TARGET.granttouser = SOURCE.granttouse
 WHEN NOT MATCHED BY TARGET 
 THEN INSERT values (SOURCE.objectid, SOURCE.GRANTTOUSER, SOURCE.CREATEDDATE, SOURCE.CREATEDBY, SOURCE.LASTUPDATEDDATE, SOURCE.LASTUPDATEDBY, SOURCE.ISACTIVE, SOURCE.FAVOURITE, SOURCE.EDITACCESS)
 --When there is a row that exists in target and same record does not exist in source then delete this record target
-WHEN NOT MATCHED BY SOURCE 
+WHEN NOT MATCHED BY SOURCE and target.objectid in (select objectid from appadmin.ti_adm_objectowner where objecttype in ('Report','Dataset','Dashboard'))
 THEN DELETE;   
 COMMIT TRANSACTION  
 END TRY   
