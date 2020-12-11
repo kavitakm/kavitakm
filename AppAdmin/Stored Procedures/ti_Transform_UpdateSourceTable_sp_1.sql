@@ -1,4 +1,4 @@
-﻿create   PROC [AppAdmin].[ti_Transform_UpdateCleanseSourceTable_sp]        
+﻿ CREATE  PROC [AppAdmin].[ti_Transform_UpdateSourceTable_sp]        
   @TransformID		int  
  ,@RequestObject	Varchar(max)  
  ,@TransformQuery	Varchar(max)  
@@ -11,13 +11,13 @@ BEGIN
 ** Version Control Information
 ** ---------------------------
 **
-**  Name                   : [AppAdmin].[ti_Transform_UpdateCleanseSourceTable_sp] 
+**  Name                   : [AppAdmin].[ti_Transform_UpdateSourceTable_sp] 
 **  Version                : 1       
 **  Date Created		   : 04-DEC-2020 
 **  Type                   : Stored Procedure
 **  Author                 : Srimathi
 ***************************************************************************     
-** Description             : To update source table of a cleanse and mark it valid
+** Description             : To update source table of a cleanse/transform and mark it valid
 **  
 ** Modification Hist:       
 **            
