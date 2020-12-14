@@ -22,6 +22,7 @@ BEGIN
 19-12-2019	Sunitha		Added default Favourite flag column value to zero  in ti_Adm_objectowner and objectAccessGrant table
 28-02-2020	Srimathi	Favourite flag and TAIEnabled flag taken from existing Objectowner entry of the object (if exists) and moved to new entry
 26-08-2020	Srimathi	Added LoadType parameter
+14-12-2020	Srimathi	Owner id modified to be taken from previous entry of object
 
 *******************************************************/ 
 
@@ -34,12 +35,18 @@ BEGIN
         DECLARE @ErrSeverity AS VARCHAR (100);
 		DECLARE @TAI_Enabled INT = 0;
 		DECLARE @fav_flag INT = 0;
+		DECLARE @owner INT;
+
         SET @flag = 0;
 
         SELECT @userid = userid
         FROM   appadmin.ti_adm_user_lu
         WHERE  useremail = @useremail
                AND isactive = 1;
+
+		--By default, user is the owner of object
+		SET @owner = @userid;
+
         IF (@ID = 0)
         BEGIN
 			DECLARE @ObjectID AS INT;
@@ -56,7 +63,8 @@ BEGIN
 				SET @flag = 1;
                 SELECT @ObjectID = ObjectID
 						,@TAI_Enabled = TAI_Enabled 
-						,@fav_flag = Favourite 
+						,@fav_flag = Favourite
+						,@owner = CreatedBy
 					FROM   [AppAdmin].[ti_adm_ObjectOwner]
                     WHERE  SchemaName = @SchemaName
 						AND ObjectLocation = @ObjectLocation
@@ -99,7 +107,7 @@ BEGIN
                     WHERE  ObjectID = @ObjectID;
             END
             INSERT  INTO [AppAdmin].[ti_adm_ObjectOwner] (ObjectName, ObjectType, SchemaName, ObjectLocation, FileExt, FileSize, maskedColumns,CreatedDate, CreatedBy, LastUpdatedDate, LastUpdatedBy, IsActive, Favourite, TAI_Enabled, LoadType )
-            VALUES                                      (@ObjectName, @ObjectType, @SchemaName, @ObjectLocation, @FileExt, @FileSize, @MaskedColumns,GetDate(), @userid, GetDate(), @userid, 1,@fav_flag, @TAI_Enabled, @LoadType);
+            VALUES                                      (@ObjectName, @ObjectType, @SchemaName, @ObjectLocation, @FileExt, @FileSize, @MaskedColumns,GetDate(), @owner, GetDate(), @userid, 1,@fav_flag, @TAI_Enabled, @LoadType);
 			SET @ObjectID_new = SCOPE_IDENTITY()
             IF @flag = 1
             BEGIN
