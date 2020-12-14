@@ -1,19 +1,4 @@
-﻿--declare @Objectlist  AppAdmin.ObjectList  
---insert into @Objectlist values('ITA_Accounting_Report','Report','IncorpTaxAct','76e37324-bb24-4605-bcd6-c4ef5cfcbb5b','f83cbbb0-5428-40c8-86b7-f55be8c0350b','','','','ITA_Accounting_Report','7971027b-c297-4e21-be8e-721a0126e90b')
---insert into @objectlist values('Advertising','Dataset','Tesser Insights','277daea8-af46-410d-a56e-c0c3b689036e','b8fc4be4-b782-4044-bf85-21f4050f4264','','','dinesh@tesserinsights.com','Advertising','277daea8-af46-410d-a56e-c0c3b689036e')
---insert into @objectlist values('ITA_Accounting_Report','Report','IncorpTaxAct','76e37324-bb24-4605-bcd6-c4ef5cfcbb5b','f83cbbb0-5428-40c8-86b7-f55be8c0350b','','','','ITA_Accounting_Report','7971027b-c297-4e21-be8e-721a0126e90b')
---insert into @objectlist values('Revenue','Dashboard','CPA','2e76099c-8a8b-486a-8c1e-4d70876914d7','dce0b5e3-5763-4350-966b-f1c656c2e9d2','','','','',)
-/*('Advertising','dataset','Tesser Insights Inc',NULL,NULl,'sunitha@tesserinsights.com',''),
-('CPA_Accounting_Report','dataset','CPA',NULL,NULl,'dinesh@tesserinsights.com','table1,table2'),  
-('CPA_Accounting_Report','Report','CPA',NULL,NULl,'dinesh@tesserinsights.com','CPA_Accounting_Report'),  
-('TestData','dataset','tesserdev',NULL,NULl,'sunitha@tesserinsights.com','test1,test2'),  
-('SampleTestReport','Report','TesserDev',NULL,NULl,'dinesh@tesserinsights.com','testData'),  
-('TestReport','Report','TesserDev',NULL,NULl,'dinesh@tesserinsights.com','testData')  */
---EXec Appadmin.ti_adm_SyncPBI_ObjectOwner_sp @ObjectList  
---select * from appadmin.test  
---delete from appadmin.ti_adm_visualize
-
-CREATE    PROC [AppAdmin].[ti_adm_SyncPBI_ObjectOwner_sp]  
+﻿CREATE    PROC [AppAdmin].[ti_adm_SyncPBI_ObjectOwner_sp]  
 @ObjectList AppAdmin.ObjectList READONLY,
 @newEditSyncReport int = 0 -- 0-Sync, 1-CreateReport, 2-EditReport
  AS  
@@ -30,6 +15,7 @@ Modification History
 16-Sep-2020	Srimathi	Modified @newReport to @newEditSyncReport to handle EditReport Scenario - changed bit to int to support values 0,1,2.  Also, included object_GUID in the join conditions to uniquely identify a PowerBI object
 24-Sep-2020	Srimathi	ti_adm_visualize insert to happen only in sync and createreport scenarios.  added if condition on @newEditSyncReport flag, and filter to check if row already exists
 21-oct-2020 Sunitha     Added Transaction to the Stored Proc
+11-dec-2020	Srimathi	Return objectid that just got created or edited - only in case of new or edit scenario
 
 *******************************************************/ 
 BEGIN TRY  
@@ -256,6 +242,23 @@ BEGIN
 		t.ObjectType = 'Report'
 		AND v.objectID IS NULL 
 END
+
+
+--11-DEC-2020 Return objectid that just got created or edited - only in case of new or edit scenario
+IF  @newEditSyncReport IN (1,2)
+BEGIN
+	SELECT O.OBJECTID 
+	FROM 
+	#ObjectList t
+	INNER JOIN AppAdmin.ti_adm_ObjectOwner O
+	ON 
+		t.objectName=o.objectName   
+		AND t.ObjectType=o.ObjectType   
+		AND t.ObjectLocation=o.ObjectLocation   
+		AND t.Object_GUID = o.Object_GUID
+		AND o.IsActive=1  
+END
+
 
 --Mark deleted objects as inactive
 --19-Aug-2020 - condition added - below statements to be executed only for complete sync, not new report creation

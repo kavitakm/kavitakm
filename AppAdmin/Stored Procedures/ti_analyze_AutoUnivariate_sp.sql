@@ -19,7 +19,8 @@ BEGIN
 **              
 ** Modification Hist:               
 **                    
-** Date                           Name                                     Modification                  
+** Date                           Name                                     Modification  
+11-DEC-2020	Srimathi	Removed trim from column selection from information_schema.columns
 *******************************************************************************/   
  --SET NOCOUNT ON  
 BEGIN TRY  
@@ -36,7 +37,7 @@ IF OBJECT_ID('tempdb.dbo.#columnlist') IS NOT NULL
 CREATE TABLE #columnlisttemp(id INT IDENTITY(1,1),columnName nVARCHAR(100))  
   
 INSERT INTO #columnlisttemp(columnName)  
-SELECT DISTINCT '[' + trim(cols.COLUMN_NAME) + ']' column_name  
+SELECT DISTINCT '[' + cols.COLUMN_NAME + ']' column_name  
 FROM  INFORMATION_SCHEMA.COLUMNS cols     
 INNER JOIN appadmin.ti_adm_objectowner o  
  ON o.SCHEMANAME = @SchemaName AND o.objectname = @tablename AND o.objecttype = 'Table' AND o.isactive = 1  
@@ -52,7 +53,7 @@ LEFT JOIN
 WHERE Isnull(tab.Constraint_Type,'') NOT IN ('PRIMARY KEY', 'FOREIGN KEY')   
 AND cols.data_type NOT IN ('geography','varbinary','uniqueidentifier')    
  AND cols.Table_Name = @TableName  AND cols.table_schema = @SchemaName  
-  AND charindex('['+trim(cols.column_name)+']', ISNULL(o.maskedColumns,''))=0;   
+  AND charindex('['+cols.column_name+']', ISNULL(o.maskedColumns,''))=0;   
  --select * from #columnlisttemp   
 -- EXEC AppAdmin.ti_adm_analyze_loadSummaryStatistics_Univariate_sp @SchemaName,@TableName,@columnName,@columnAlias,@UserEmail  
  --Insert all the univariate records of a given table to ti_adm_summarystatistics table   
@@ -80,4 +81,4 @@ END TRY
   SET @ErrSeverity=ERROR_SEVERITY()  
   RAISERROR(@ErrMsg,@Errseverity,1)  
 END CATCH  
-END
+END  
