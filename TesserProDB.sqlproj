@@ -125,6 +125,11 @@
     <Build Include="AppAdmin\Stored Procedures\ti_adm_SyncPBI_ObjectGrantAccess_sp.sql" />
     <Build Include="AppAdmin\Stored Procedures\ti_adm_SyncPBI_ObjectOwner_sp.sql" />
     <Build Include="AppAdmin\Stored Procedures\ti_adm_viewDependencies_sp.sql" />
+    <Build Include="AppAdmin\Stored Procedures\ti_adm_ObjectOwner_Intermediate.sql" />
+    <Build Include="AppAdmin\Stored Procedures\ti_adm_AanalyticsVisualizeDataset_sp.sql" />
+    <Build Include="AppAdmin\Stored Procedures\ti_adm_GetAllObjectOwnerIntermediateDetails.sql" />
+    <Build Include="AppAdmin\Stored Procedures\ti_adm_UpdateObjectOwnerIntermediate_sp.sql" />
+    <Build Include="AppAdmin\Stored Procedures\ti_adm_catalogEnterpriseData_sp.sql" />
     <Build Include="AppAdmin\Stored Procedures\ti_analyze_AutoBivariate_sp.sql" />
     <Build Include="AppAdmin\Stored Procedures\ti_analyze_AutoUnivariate_sp.sql" />
     <Build Include="AppAdmin\Stored Procedures\ti_Analyze_CreateOrUpdateImputedTableWithStatistics_sp.sql" />
@@ -194,8 +199,13 @@
     <None Include="Scripts\ScriptsIgnoredOnImport.sql" />
     <Build Include="AppAdmin\Stored Procedures\ti_Transform_GetDeletedSourceTableList_sp_1.sql" />
     <Build Include="AppAdmin\Stored Procedures\ti_Transform_UpdateSourceTable_sp_1.sql" />
+    
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PrDeploy Include="Script.PreDeployment1.sql" />
+	<PrDeploy Include="Script.PreDeployment2.sql" />
   </ItemGroup>
 </Project>
