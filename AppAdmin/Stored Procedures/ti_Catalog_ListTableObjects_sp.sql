@@ -4,7 +4,7 @@
 --exec [AppAdmin].[ti_Catalog_ListTableObjects_sp] '','','ALL','dinesh@tesserinsights.com'            
         
          
-ALTER PROC [AppAdmin].[ti_Catalog_ListTableObjects_sp]                    
+CREATE PROC [AppAdmin].[ti_Catalog_ListTableObjects_sp]                    
 @SearchText varchar(100),          
 @InnerSearchText varchar(100),          
 @SchemaName varchar(30),          

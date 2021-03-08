@@ -1,5 +1,5 @@
 ﻿--exec [AppAdmin].[ti_Analyze_StatisticsList_sp] '','sunitha','All','sunitha@tesserinsights.com'    
-ALTER Proc [AppAdmin].[ti_Analyze_StatisticsList_sp]                      
+CREATE Proc [AppAdmin].[ti_Analyze_StatisticsList_sp]                      
 @SearchText varchar(100),    
 @InnerSearchText varchar(100),    
 @SchemaName varchar(30),    

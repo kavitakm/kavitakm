@@ -1,5 +1,5 @@
 ﻿--exec [AppAdmin].[ti_adm_viewDependencies_sp] 'SalesData22_05','Table','Sandbox','','','dinesh@tesserinsights.com'
-ALTER PROCEDURE  [AppAdmin].[ti_adm_viewDependencies_sp]                     
+CREATE PROCEDURE  [AppAdmin].[ti_adm_viewDependencies_sp]                     
 @ObjectName Varchar(200),              
 @ObjectType Varchar(50),              
 @SchemaName Varchar(50),              

@@ -1,11 +1,5 @@
-﻿/****** Object:  StoredProcedure [AppAdmin].[ti_Ingest_Incremental_DataLoad]    Script Date: 08-Mar-21 3:34:53 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-ALTER PROC [AppAdmin].[ti_Ingest_Incremental_DataLoad]            
+﻿
+CREATE PROC [AppAdmin].[ti_Ingest_Incremental_DataLoad]            
     @FilePath VARCHAR(100), @SchemaName VARCHAR(50),@TableName VARCHAR(200)  
 AS            
 BEGIN            

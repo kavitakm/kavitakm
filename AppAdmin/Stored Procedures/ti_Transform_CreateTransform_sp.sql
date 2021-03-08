@@ -1,12 +1,4 @@
-﻿/****** Object:  StoredProcedure [AppAdmin].[ti_Transform_CreateTransform_sp]    Script Date: 08-Mar-21 3:35:53 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-ALTER   PROC [AppAdmin].[ti_Transform_CreateTransform_sp]        
+﻿CREATE   PROC [AppAdmin].[ti_Transform_CreateTransform_sp]        
   @TransformName Varchar(150)  
  ,@RequestObject Varchar(max)  
  ,@TransformQuery Varchar(max)  

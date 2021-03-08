@@ -1,18 +1,9 @@
-﻿/****** Object:  StoredProcedure [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Univariate_sp]    Script Date: 1/29/2021 12:22:05 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-  
-  
-  
+﻿
 --Exec [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Univariate_sp] 'Sandbox','tst_convert','cumulative','srimathi@tesserinsights.com'  
     
 --EXEC AppAdmin.ti_adm_analyze_loadSummaryStatistics_Univariate_sp 'Sandbox','DimProduct_test','safetystocklevel','stock','sunitha.menni@fivepointfivesolutions.com'            
 --select * from appadmin.ti_adm_SummaryStatistics            
-ALTER    PROC [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Univariate_sp]            
+CREATE  PROC [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Univariate_sp]            
      @SchemaName VARCHAR(100)  
   ,@TableName VARCHAR(100)            
      ,@ColumnName nVARCHAR(100)  

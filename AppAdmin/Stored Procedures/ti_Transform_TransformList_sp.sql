@@ -1,5 +1,5 @@
 ﻿--exec [AppAdmin].[ti_Transform_TransformList_sp] '','','dinesh@TesserInsights.com'        
-ALTER Proc [AppAdmin].[ti_Transform_TransformList_sp]                              
+CREATE Proc [AppAdmin].[ti_Transform_TransformList_sp]                              
  @SearchText varchar(100)        
 ,@InnerSearchText varchar(100)        
 --,@SchemaName varchar(30)        

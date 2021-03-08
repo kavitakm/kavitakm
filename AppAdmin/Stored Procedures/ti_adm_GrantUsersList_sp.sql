@@ -2,7 +2,7 @@
 
 --exec  [AppAdmin].[ti_adm_GrantUsersList_sp] 'Sales','CreditUnion1','Table','','','Sunitha@tesserinsights.com',0
   
-ALTER   Proc [AppAdmin].[ti_adm_GrantUsersList_sp]          
+CREATE   Proc [AppAdmin].[ti_adm_GrantUsersList_sp]          
 @SchemaName varchar(100), -- will be blank in case of file or transform  
 @ObjectName varchar(100), -- Table or file or Transform name  
 @ObjectType varchar(50),  

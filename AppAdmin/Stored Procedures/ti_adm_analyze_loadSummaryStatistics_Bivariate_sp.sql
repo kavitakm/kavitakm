@@ -1,6 +1,6 @@
 ﻿
   
-ALTER   PROC [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Bivariate_sp]    
+CREATE   PROC [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Bivariate_sp]    
      @SchemaName VARCHAR(100),@TableName VARCHAR(100)    
      ,@Column1Name nVARCHAR(100),@Col1NumOrCat VARCHAR(1), @Alias1Name VARCHAR(100),@Column2Name nVARCHAR(100), @Col2NumOrCat VARCHAR(1), @Alias2Name VARCHAR(100),@UserEmail VARCHAR(100), @save VARCHAR(5)    
 AS    

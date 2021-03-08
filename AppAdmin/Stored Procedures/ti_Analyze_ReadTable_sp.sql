@@ -1,5 +1,5 @@
 ﻿ --exec appadmin.ti_Analyze_ReadTable_sp 'Sandbox','EduTN','Area_Name','Ambattur (M)','Total_Population_Females',null,'','','1500','2500' 
-ALTER PROCEDURE [AppAdmin].[ti_Analyze_ReadTable_sp]          
+CREATE PROCEDURE [AppAdmin].[ti_Analyze_ReadTable_sp]          
 @SchemaName varchar(100),            
 @TableName varchar(100),            
 @Column1Name varchar(200),          

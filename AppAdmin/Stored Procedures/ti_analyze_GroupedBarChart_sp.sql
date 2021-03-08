@@ -1,13 +1,8 @@
 ﻿/****** Object:  StoredProcedure [AppAdmin].[ti_analyze_GroupedBarChart_sp]    Script Date: 2/9/2021 6:24:25 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 --exec [AppAdmin].[ti_analyze_GroupedBarChart_sp] 'sandbox','passenger','[Date]','[Gender]'  
 --exec [AppAdmin].[ti_analyze_GroupedBarChart_sp] 'Sunitha','TestDataLoad','[STD_SLO]','[Supplies]'  
-ALTER PROCEDURE [AppAdmin].[ti_analyze_GroupedBarChart_sp]  
+CREATE PROCEDURE [AppAdmin].[ti_analyze_GroupedBarChart_sp]  
 @schemaname VARCHAR(100),  
 @tablename VARCHAR(100),  
 @column1Name VARCHAR(100),  

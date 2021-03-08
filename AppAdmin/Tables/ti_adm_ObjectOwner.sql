@@ -17,6 +17,7 @@
 	[Object_GUID] [uniqueidentifier] NULL,
 	[Workspace_GUID] [uniqueidentifier] NULL,
 	[LoadType] [int] NULL,
+	[FileDelimiterID] [int] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[ObjectID] ASC
