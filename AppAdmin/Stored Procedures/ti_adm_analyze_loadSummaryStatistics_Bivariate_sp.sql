@@ -1,4 +1,6 @@
-﻿CREATE   PROC [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Bivariate_sp]    
+﻿
+  
+ALTER   PROC [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Bivariate_sp]    
      @SchemaName VARCHAR(100),@TableName VARCHAR(100)    
      ,@Column1Name nVARCHAR(100),@Col1NumOrCat VARCHAR(1), @Alias1Name VARCHAR(100),@Column2Name nVARCHAR(100), @Col2NumOrCat VARCHAR(1), @Alias2Name VARCHAR(100),@UserEmail VARCHAR(100), @save VARCHAR(5)    
 AS    
@@ -16,6 +18,7 @@ Date		Change Description							Author
 07-oct-2020	 Enclose columnname  and AliasName with 
 		square brackets to allow column names with space Sunitha				
 05-Nov-2020	Increase precision to 20 to handle bigint	Srimathi
+06-Mar-2021	Bit datatype moved to category list from numerical	Srimathi
 *******************************************************************************/  
 --SET NOCOUNT ON  
 BEGIN TRY  
@@ -65,7 +68,7 @@ INSERT INTO #ti_adm_SummaryStatistics(ObjectID, Column1Name, Column1Value, Colum
  --print 'Base row inserted'  
    
 /* Numerical - Numerical Combination */    
-IF (@Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') AND @Col1NumOrCat = 'N' AND @Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') and @Col2NumOrCat = 'N')    
+IF (@Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','numeric','small money','float','real','decimal') AND @Col1NumOrCat = 'N' AND @Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') and @Col2NumOrCat = 'N')    
 BEGIN    
 --PRINT 'N-N'  
  IF OBJECT_ID('tempdb.dbo.#Temp') Is Not Null    
@@ -85,11 +88,11 @@ ELSE
 /*Numerical - categorical Combination */    
     
 IF (  
- @Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal')   
+ @Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','numeric','small money','float','real','decimal')   
  AND @Col1NumOrCat ='N' )  
  AND (  
-  @Col2_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME') OR   
-  (@Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') AND @Col2NumOrCat = 'C')  
+  @Col2_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME','bit') OR   
+  (@Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','numeric','small money','float','real','decimal') AND @Col2NumOrCat = 'C')  
   )    
 BEGIN    
 -- PRINT 'N-C'  
@@ -171,13 +174,13 @@ ELSE
     
 --  PRINT 'ELSE'  
 IF (  
- @Col1_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME')   
- OR (@Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') AND @Col1NumOrCat = 'C')  
+ @Col1_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME','bit')   
+ OR (@Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','numeric','small money','float','real','decimal') AND @Col1NumOrCat = 'C')  
  )   
  AND   
  (  
- @Col2_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME')   
- OR (@Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') AND @Col2NumOrCat = 'C')  
+ @Col2_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME','bit')   
+ OR (@Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','numeric','small money','float','real','decimal') AND @Col2NumOrCat = 'C')  
  )     
 BEGIN    
   --PRINT 'C-C'  
@@ -228,4 +231,10 @@ END TRY
   SET @ErrSeverity=ERROR_SEVERITY()  
   RAISERROR(@ErrMsg,@Errseverity,1)  
 END CATCH  
-END
+END    
+    
+    
+    
+GO
+
+

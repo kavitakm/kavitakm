@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE  [AppAdmin].[ti_adm_viewDependencies_sp]                     
+﻿--exec [AppAdmin].[ti_adm_viewDependencies_sp] 'SalesData22_05','Table','Sandbox','','','dinesh@tesserinsights.com'
+ALTER PROCEDURE  [AppAdmin].[ti_adm_viewDependencies_sp]                     
 @ObjectName Varchar(200),              
 @ObjectType Varchar(50),              
 @SchemaName Varchar(50),              
@@ -14,6 +15,8 @@ BEGIN
 ** Author                 : Srimathi    
 ** Description            : View Dependencies of an object
 ** Date					  : 24-Oct-2019    
+**History
+** Sunitha   22-Dec-2020    updated the length of objectName to 100 
   
 
 *******************************************************************************/    
@@ -28,7 +31,7 @@ DECLARE @str NVARCHAR(500);
 
 	IF OBJECT_ID('tempdb.dbo.#tmp') IS NOT NULL
 		DROP TABLE #tmp
-	CREATE TABLE #tmp(Objecttype VARCHAR(20), ObjectName VARCHAR(30))
+	CREATE TABLE #tmp(Objecttype VARCHAR(20), ObjectName VARCHAR(100))
 
 	INSERT INTO #tmp 
 	SELECT 'TRANSFORM', TRANSFORMNAME FROM APPADMIN.ti_adm_transform t INNER JOIN appadmin.ti_adm_ObjectOwner o  ON t.objectid = o.ObjectID 
@@ -43,4 +46,7 @@ DECLARE @str NVARCHAR(500);
 	SELECT * FROM #tmp;
 	DROP TABLE #tmp;
 
-END
+END  
+GO
+
+
