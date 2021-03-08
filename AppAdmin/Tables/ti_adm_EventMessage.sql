@@ -12,7 +12,8 @@
 	[CreatedDate] [datetime] NOT NULL,
 	[LastUpdatedBy] [int] NULL,
 	[LastUpdatedDate] [datetime] NULL,
-	[UserEmail] [varchar](100) NULL
+	[UserEmail] [varchar](100) NULL,
+	MessageDismiss Bit NULL Default(0)
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 ALTER TABLE [AppAdmin].[ti_adm_EventMessage] ADD  CONSTRAINT [DF_ti_adm_EventMessage_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]

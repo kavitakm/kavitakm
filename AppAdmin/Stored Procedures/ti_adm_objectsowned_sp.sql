@@ -1,13 +1,6 @@
-﻿/****** Object:  StoredProcedure [AppAdmin].[ti_adm_objectsowned_sp]    Script Date: 1/19/2021 8:05:06 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
+﻿
 --Exec [AppAdmin].[ti_adm_objectsowned_sp] 'srimathi@tesserinsights.com'
-ALTER   PROC [AppAdmin].[ti_adm_objectsowned_sp] 
+CREATE   PROC [AppAdmin].[ti_adm_objectsowned_sp] 
 	@userEmail		 VARCHAR(100)
 AS     
 BEGIN        

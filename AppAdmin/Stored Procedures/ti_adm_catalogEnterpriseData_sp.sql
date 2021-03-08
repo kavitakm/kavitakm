@@ -1,12 +1,4 @@
-﻿/****** Object:  StoredProcedure [AppAdmin].[ti_adm_catalogEnterpriseData_sp]    Script Date: 2/3/2021 11:49:06 AM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
---exec [AppAdmin].[ti_adm_catalogEnterpriseData_sp]
+﻿--exec [AppAdmin].[ti_adm_catalogEnterpriseData_sp]
 
 CREATE procedure [AppAdmin].[ti_adm_catalogEnterpriseData_sp]
 as

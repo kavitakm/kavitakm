@@ -1,5 +1,5 @@
 ﻿-- exec [AppAdmin].[ti_Catalog_ListFileObjects_sp]  '' ,'','sunitha@tesserinsights.com'      
-ALTER PROC [AppAdmin].[ti_Catalog_ListFileObjects_sp]              
+CREATE PROC [AppAdmin].[ti_Catalog_ListFileObjects_sp]              
 @SearchText varchar(100),      
 @InnerSearchText varchar(100),      
 @UserEmail varchar(100)      

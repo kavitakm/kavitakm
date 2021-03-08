@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [AppAdmin].[ti_adm_CreateOrUpdateObjectOwner_sp]
+﻿CREATE PROCEDURE [AppAdmin].[ti_adm_CreateOrUpdateObjectOwner_sp]
 	@ID INT
 	, @ObjectName VARCHAR (200)
 	, @ObjectType VARCHAR (50)

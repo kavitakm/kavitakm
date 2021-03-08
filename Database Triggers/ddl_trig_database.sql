@@ -1,4 +1,4 @@
-﻿ALTER TRIGGER [ddl_trig_database]   
+﻿CREATE TRIGGER [ddl_trig_database]   
 ON DATABASE
 FOR CREATE_TABLE 
 AS  
