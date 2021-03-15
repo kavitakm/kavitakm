@@ -1,6 +1,4 @@
-﻿
-  
-CREATE   PROC [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Bivariate_sp]    
+﻿CREATE   PROC [AppAdmin].[ti_adm_analyze_loadSummaryStatistics_Bivariate_sp]    
      @SchemaName VARCHAR(100),@TableName VARCHAR(100)    
      ,@Column1Name nVARCHAR(100),@Col1NumOrCat VARCHAR(1), @Alias1Name VARCHAR(100),@Column2Name nVARCHAR(100), @Col2NumOrCat VARCHAR(1), @Alias2Name VARCHAR(100),@UserEmail VARCHAR(100), @save VARCHAR(5)    
 AS    
@@ -19,6 +17,7 @@ Date		Change Description							Author
 		square brackets to allow column names with space Sunitha				
 05-Nov-2020	Increase precision to 20 to handle bigint	Srimathi
 06-Mar-2021	Bit datatype moved to category list from numerical	Srimathi
+12-Mar-2021	Tablename enclosed in square brackets to allow special characters in tablename
 *******************************************************************************/  
 --SET NOCOUNT ON  
 BEGIN TRY  
@@ -48,7 +47,8 @@ SELECT * INTO #ti_adm_SummaryStatistics FROM appadmin.ti_adm_SummaryStatistics W
   
 SELECT @Col1_DT = DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @SchemaName AND TABLE_NAME = @tableName AND COLUMN_NAME = replace(replace(@Column1Name,'[',''),']','')    
 SELECT @Col2_DT = DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @SchemaName AND TABLE_NAME = @tableName AND COLUMN_NAME = replace(replace(@Column2Name,'[',''),']','')    
-  
+
+SET @TableName = '[' + replace(replace(@TableName,'[',''),']','') + ']'    
 SET @query = 'SELECT DISTINCT ''' + isnull(STR(@Object_id),'') + ''' AS ObjectId, ''' + @Column1Name + ''', case when ''' + @Col1_DT + ''' in (''NVARCHAR'',''VARCHAR'',''CHAR'',''NCHAR'',''DATE'',''DATETIME'',''SMALLDATETIME'') OR ''' + @col1NumorCat + ''' = ''C''  THEN isnull(CONVERT(NVARCHAR(4000),' + @Column1Name + '),''Null'') ELSE NULL END,  ''' + @Alias1Name + ''',  ''' + @Column2Name + ''', case when ''' + @Col2_DT + ''' in (''NVARCHAR'',''VARCHAR'',''CHAR'',''NCHAR'',''DATE'',''DATETIME'',''SMALLDATETIME'') OR ''' + @Col2NumOrCat + '''= ''C'' THEN isnull(CONVERT(NVARCHAR(4000),' + @Column2Name + '),''Null'') ELSE NULL END,  ''' +  @Alias2Name + ''', NULL AS CreatedDate, (SELECT userID FROM appadmin.ti_Adm_user_lu WHERE USerEMail=''' +@useremail + ''') AS CreatedBy, NULL as LastUpdatedDate,  (SELECT userID FROM appadmin.ti_Adm_user_lu WHERE USerEMail=''' + @useremail + ''') AS LastUpdatedBy,  1 AS IsActive  FROM ' + @SchemaName + '.' + @TableName;  
 --print @object_id  
   
