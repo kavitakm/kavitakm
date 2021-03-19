@@ -1,4 +1,5 @@
-﻿ --exec appadmin.ti_Analyze_ReadTable_sp 'Sandbox','EduTN','Area_Name','Ambattur (M)','Total_Population_Females',null,'','','1500','2500' 
+﻿/****** Object:  StoredProcedure [AppAdmin].[ti_Analyze_ReadTable_sp]    Script Date: 19-Mar-21 10:51:48 AM ******/
+ --exec appadmin.ti_Analyze_ReadTable_sp 'Sandbox','EduTN','Area_Name','Ambattur (M)','Total_Population_Females',null,'','','1500','2500' 
 CREATE PROCEDURE [AppAdmin].[ti_Analyze_ReadTable_sp]          
 @SchemaName varchar(100),            
 @TableName varchar(100),            
@@ -29,6 +30,7 @@ BEGIN
 ** Date          Name     Modification                        
 18/2/2020     Sunitha  update sp to pass outlier range values  
 05/11/2020  Srimathi handled column names with spaces  
+03/16/2021	Srimathi	enclosed table and schema names within square brackets
   
 *******************************************************************************/  
 DECLARE @col1_dt VARCHAR(50);          
@@ -102,7 +104,7 @@ DECLARE @num_scale2 INT;
 	Set @SQLWhere = @SQLWhere + @str ; 
  End 
         
- SET @str = 'SELECT * FROM ' + @SchemaName + '.' + @TableName ;      
+ SET @str = 'SELECT * FROM [' + @SchemaName + '].[' + @TableName + ']' ;      
  if (Len(@SQLWhere) >0 )    
   SET @str = @str + ' WHERE ' + @SQLWhere ;    
   PRINT @STR  

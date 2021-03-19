@@ -106,7 +106,7 @@ BEGIN TRY
    SET @DELETETARGET= N'DELETE il  
    FROM (  
    SELECT *  
-   FROM OPENROWSET (BULK ''' + @vFILEPATH + ''', DATA_SOURCE = ''TesserDevCredentialDS'',SINGLE_CLOB) as log_file  
+   FROM OPENROWSET (BULK ''' + @vFILEPATH + ''', DATA_SOURCE = ''TesserCredentialDS'',SINGLE_CLOB) as log_file  
    CROSS APPLY OPENJSON(BulkColumn)  
    WITH(  
    ' +  @T3COLUMNS + '  
@@ -153,7 +153,7 @@ BEGIN TRY
   --PRINT @COLUMNDEF  
   SET @BULKINSERT =  N'INSERT INTO [' + @vSCHEMANAME + '].[' + @vTABLENAME + ']'+ 
   ' SELECT ' + @COLUMNS + ' FROM   
-  OPENROWSET( BULK ''' + @vFILEPATH + ''', DATA_SOURCE = ''TesserDevCredentialDS'',SINGLE_CLOB) as a  
+  OPENROWSET( BULK ''' + @vFILEPATH + ''', DATA_SOURCE = ''TesserCredentialDS'',SINGLE_CLOB) as a  
    CROSS APPLY OPENJSON(BulkColumn)  
     WITH ( '   
      + @COLUMNDEF +  

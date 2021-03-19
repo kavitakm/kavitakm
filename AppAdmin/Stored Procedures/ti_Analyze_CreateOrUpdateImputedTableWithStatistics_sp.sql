@@ -1,4 +1,5 @@
-﻿--Exec [AppAdmin].[ti_Analyze_CreateOrUpdateImputedTableWithStatistics_sp] 'sandbox','advertising','TV','','radio','','U','TV','230.5','srimathi@tesserinsights.com','230','231','37','38'      
+﻿/****** Object:  StoredProcedure [AppAdmin].[ti_Analyze_CreateOrUpdateImputedTableWithStatistics_sp]    Script Date: 19-Mar-21 10:54:32 AM ******/
+--Exec [AppAdmin].[ti_Analyze_CreateOrUpdateImputedTableWithStatistics_sp] 'sandbox','advertising','TV','','radio','','U','TV','230.5','srimathi@tesserinsights.com','230','231','37','38'      
 
 --Exec [AppAdmin].[ti_Analyze_CreateOrUpdateImputedTableWithStatistics_sp] 'sandbox','advertising_test','TV','8.6','radio','17.2','D','','','sunitha@tesserinsights.com','','','',''      
  
@@ -35,6 +36,8 @@ BEGIN
 **                    
 ** Date          Name     Modification                      
 18/2/2020	    Sunitha	 update sp to pass outlier range values
+11/11/2020      Sunitha  update the column1value and column2values to handle empty strings for single outlier value
+03/16/2021	Srimathi	enclosed table and schema names within square brackets
 
 *******************************************************************************/  
 --SET NOCOUNT ON  
@@ -106,7 +109,8 @@ IF (@Column1minvalue='' AND @Column1maxvalue='')
 BEGIN
 /* Impute the column with new value or delete the records */          
 	IF(@col1_dt in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATETIME','SMALLDATETIME','DATE','BIT','DATETIME2')) 
-		SET @SQLWhere_col1=' ISNULL(' + @column1name + ','''') = ISNULL(CONVERT(' + @col1_dt + ', ''' + @Column1Value + '''),'''') ' 
+		--SET @SQLWhere_col1=' ISNULL(' + @column1name + ','''') = ISNULL(CONVERT(' + @col1_dt + ', ''' + @Column1Value + '''),'''') ' 
+		SET @SQLWhere_col1= @column1name +'=CONVERT(' + @col1_dt + ', ''' + @Column1Value + ''')' 
 	ELSE 
 		if @col1_dt in ('decimal','numeric')  
 			SET @sqlwhere_col1 = @column1name + ' = CONVERT(' + @col1_dt + '(' + str(@num_prec1) + ',' + str(@num_scale1) + '), ''' + @Column1Value + ''') ' ; 
@@ -114,17 +118,20 @@ BEGIN
 			SET @SQLWhere_col1= @column1name + ' = CONVERT(' + @col1_dt + ', ''' + @Column1Value + ''') ';   
 
 		--SET @str = @str + ' = CONVERT(' + @col1_dt + ', ''' + @Column1Value + ''') ' ;    
-	IF ISNULL(@COLUMN1VALUE,'') =''  
+	--IF ISNULL(@COLUMN1VALUE,'') =''  
+	IF @Column1Value IS NULL
 		SET @SQLWhere_col1 = @Column1Name + ' IS NULL '  
 	
 	IF(@col2_dt in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATETIME','SMALLDATETIME','DATE','BIT','DATETIME2'))  
-		SET @SQLWhere_col2=' ISNULL(' + @column2name + ','''') = ISNULL(CONVERT(' + @col2_dt + ', ''' + @Column2Value + '''),'''') ';  
+		--SET @SQLWhere_col2=' ISNULL(' + @column2name + ','''') = ISNULL(CONVERT(' + @col2_dt + ', ''' + @Column2Value + '''),'''') ';  
+		SET @SQLWhere_col2=@column2name + '=CONVERT(' + @col2_dt + ', ''' + @Column2Value + ''')';  
 	ELSE 
 		if @col2_dt in ('decimal','numeric')
 			SET @sqlwhere_col2 = @column2name + ' = CONVERT(' + @col2_dt + '(' + str(@num_prec2) + ',' + str(@num_scale2) + '), ''' + @Column2Value + ''') ' ;  
 		ELSE  
 			SET @SQLWhere_col2= @column2name + ' = CONVERT(' + @col2_dt + ', ''' + @Column2Value + ''') ';
- 	IF ISNULL(@column2Value,'') =''  
+ 	--IF ISNULL(@column2Value,'') =''  
+	IF @column2Value IS NULL
 		SET @SQLWhere_col2 = @Column2Name + ' IS NULL '  
 	
 END
@@ -153,7 +160,7 @@ print @sqlwhere_col1
 print @sqlwhere_col2
 IF @DeleteOrUpdate = 'U'          
 BEGIN    
-	SET @str = 'UPDATE ' + @SchemaName + '.' + @TableName  + ' SET ' + @ImputedColumnName
+	SET @str = 'UPDATE [' + @SchemaName + '].[' + @TableName  + '] SET ' + @ImputedColumnName
 	IF @Imputedcol_dt in ('decimal','numeric')
 		SET @str = @str + ' = CONVERT(' + @imputedcol_dt + '(' + str(@num_prec_imputed) + ',' + str(@num_scale_imputed) + '), ''' + @ImputedValue + ''')'
 	ELSE 
@@ -166,7 +173,7 @@ BEGIN
 END          
 ELSE          
 BEGIN     
-	SET @str = 'DELETE FROM ' + @SchemaName + '.' + @imputedtablename + ' WHERE '+@SQLWhere_col1;  
+	SET @str = 'DELETE FROM [' + @SchemaName + '].[' + @imputedtablename + '] WHERE '+@SQLWhere_col1;  
 	--print @str;  
 	IF ISNULL(@Column2name,'') <> ''          
 		SET @str = @str + ' AND ' +@SQLWhere_col2;   
@@ -241,4 +248,10 @@ BEGIN CATCH
 	SET @ErrSeverity=ERROR_SEVERITY()  
 	RAISERROR(@ErrMsg,@Errseverity,1)  
 END CATCH  
-END
+END       
+      
+      
+      
+GO
+
+
