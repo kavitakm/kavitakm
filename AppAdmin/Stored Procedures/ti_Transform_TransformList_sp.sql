@@ -1,4 +1,6 @@
-﻿--exec [AppAdmin].[ti_Transform_TransformList_sp] '','','dinesh@TesserInsights.com'        
+﻿/****** Object:  StoredProcedure [AppAdmin].[ti_Transform_TransformList_sp]    Script Date: 19-Mar-21 10:50:13 AM ******/
+
+--exec [AppAdmin].[ti_Transform_TransformList_sp] '','','dinesh@TesserInsights.com'        
 CREATE Proc [AppAdmin].[ti_Transform_TransformList_sp]                              
  @SearchText varchar(100)        
 ,@InnerSearchText varchar(100)        
@@ -109,7 +111,7 @@ BEGIN
  INNER JOIN [AppAdmin].[ti_adm_User_lu] U on TObj.CreatedBy = U.UserID and U.isactive =1              
  INNER JOIN [AppAdmin].[ti_adm_User_lu] LU on TObj.LastUpdatedBy = LU.UserID and LU.isactive =1          
  LEFT JOIN (select * from [AppAdmin].[ti_adm_ObjectOwner] where objecttype in('Table','File') and isactive = 1) obj on obj.Objectid = t.TargetObjectID  AND obj.IsActive =1               
- INNER JOIN (  
+ Left JOIN (  
   Select Vi.Predecessorid as TableID,obj1.objectid,obj1.Object_GUID from [AppAdmin].[ti_adm_ObjectOwner] obj1  
   INNER JOIN [AppAdmin].[ti_adm_visualize] vi on obj1.objectID = vi.objectID and obj1.ObjectType ='Dataset'  and OBJ1.isActive = 1  
   INNER JOIN [AppAdmin].[ti_adm_User_lu] ul on ul.UserID = obj1.createdBy and ul.userEmail ='TesserPlatformSignIn@tesserinsights.com') VIDataSet on t.TargetObjectID = VIDataSet.TableID 
@@ -165,7 +167,7 @@ BEGIN
  INNER JOIN [AppAdmin].[ti_adm_User_lu] U on TObj.CreatedBy = U.UserID and U.isactive =1          
   INNER JOIN [AppAdmin].[ti_adm_User_lu] LU on TObj.LastUpdatedBy = LU.UserID and LU.isactive =1            
  LEFT JOIN (select * from [AppAdmin].[ti_adm_ObjectOwner] where objecttype in('Table','File') and isactive = 1) obj on obj.Objectid = t.TargetObjectID  AND obj.IsActive =1               
- INNER JOIN (  
+ LEFT JOIN (  
   Select Vi.Predecessorid as TableID,obj1.objectid,obj1.Object_GUID from [AppAdmin].[ti_adm_ObjectOwner] obj1  
   INNER JOIN [AppAdmin].[ti_adm_visualize] vi on obj1.objectID = vi.objectID and obj1.ObjectType ='Dataset'  and OBJ1.isActive = 1  
   INNER JOIN [AppAdmin].[ti_adm_User_lu] ul on ul.UserID = obj1.createdBy and ul.userEmail ='TesserPlatformSignIn@tesserinsights.com') VIDataSet on t.TargetObjectID = VIDataSet.TableID 
