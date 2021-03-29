@@ -201,6 +201,7 @@
     <Build Include="AppAdmin\Tables\ti_adm_FileDelimiters_lu.sql" />
     <Build Include="AppAdmin\Stored Procedures\ti_adm_GetAllFileDelimiters_sp.sql" />
     <Build Include="AppAdmin\Tables\ti_adm_ObjectOwner_Intermediate.sql" />
+    <Build Include="AppAdmin\Stored Procedures\ti_Transform_GetTaiFlag_sp.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
