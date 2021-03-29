@@ -25,6 +25,7 @@ BEGIN
  23-oct-2020					Sunitha							Modified the logic to fix performance issue
  05-Nov-2020					Srimathi						added isNull check before updating TAI Enabled flag
  09-Nov-2020					Srimathi						DATEDIFF_BIG instead of DATEDIFF()
+ 24-Mar-2021					Srimathi						Enclosed Tablename within brackets
 *******************************************************************************/   
  --SET NOCOUNT ON  
 BEGIN TRY  
@@ -107,7 +108,7 @@ DECLARE @ct INT
   BEGIN   
   		SET @sql_query = N'SELECT  @cnt = count(distinct DATEDIFF_BIG(second, pDataDate, ' + @col1 + ')) FROM  (SELECT  ' + @col1 + ', LAG(' + @col1 + ') 
 		OVER (ORDER BY ' + @col1;
-		SET @sql_query = @sql_query + ') pDataDate FROM ' + @SchemaName + '.' + @TableName + ' GROUP BY ' + @col1 + ') q WHERE pDataDate IS NOT NULL'
+		SET @sql_query = @sql_query + ') pDataDate FROM [' + @SchemaName + '].[' + @TableName + '] GROUP BY ' + @col1 + ') q WHERE pDataDate IS NOT NULL'
 		EXEC sp_executesql @sql_query, N'@cnt int OUTPUT', @cnt = @ct OUTPUT		
 		IF @ct = 1
 		  UPDATE #columnlisttemp
@@ -196,4 +197,7 @@ END TRY
   SET @ErrSeverity=ERROR_SEVERITY()  
   RAISERROR(@ErrMsg,@Errseverity,1)  
 END CATCH  
-END
+END  
+GO
+
+
