@@ -6,5 +6,6 @@
 	[CreatedDate] [datetime] NULL,
 	[CreatedBy] [int] NULL,
 	[IsActive] [bit] NULL,
-	[UserEmail] [varchar](50) NULL
+	[UserEmail] [varchar](50) NULL,
+	[Delete_Flag] [bit] NULL
 ) ON [PRIMARY]

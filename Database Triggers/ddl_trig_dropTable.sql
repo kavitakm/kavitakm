@@ -6,6 +6,7 @@ BEGIN
 /*
 02-DEC-2020	Srimathi	Removed Sandbox check in IF - to handle backend deletion of tables in sandbox
 08-DEC-2020 Srimathi	Added Calling program name check - DROP table from UI/Platform will be ignored
+31-Mar-2020	Srimathi	Modified code to write to intermediate table with delete_flag 1
 */
 DECLARE @id int;
 DECLARE @objectID int;
@@ -27,7 +28,10 @@ declare @prog varchar(100);
 	--insert into sandbox.test values(1,EVENTDATA().value('(/EVENT_INSTANCE/LoginName)[1]','varchar(max)'));
     IF @ObjectID is not null and EVENTDATA().value('(/EVENT_INSTANCE/ObjectType)[1]','nvarchar(max)') = 'TABLE' AND EVENTDATA().value('(/EVENT_INSTANCE/SchemaName)[1]','nvarchar(max)') not in ('DBO','GUEST','INFORMATION_SCHEMA','SYS','APPADMIN','INCORPTAX','BRIGHTWING') AND @prog != 'Core .Net SqlClient Data Provider'
 	BEGIN
-		UPDATE APPADMIN.TI_ADM_TRANSFORM SET to_be_validated = 1 FROM appadmin.ti_adm_ObjectOwner o WHERE TI_ADM_TRANSFORM.ObjectId = o.ObjectID AND o.isactive = 1 AND CHARINDEX(@tblname, transformquery) > 0;
+		Insert into [AppAdmin].[ti_adm_ObjectOwner_Intermediate](ObjectName, ObjectType, SchemaName, CreatedDate,  CreatedBy,UserEmail,IsActive, Delete_Flag)
+		 Values ( EVENTDATA().value('(/EVENT_INSTANCE/ObjectName)[1]','nvarchar(max)') , 'Table', EVENTDATA().value('(/EVENT_INSTANCE/SchemaName)[1]','nvarchar(max)'), EVENTDATA().value('(/EVENT_INSTANCE/PostTime)[1]','datetime'),  @id,trim(EVENTDATA().value('(/EVENT_INSTANCE/LoginName)[1]','varchar(max)')),1,1)
+
+/*		UPDATE APPADMIN.TI_ADM_TRANSFORM SET to_be_validated = 1 FROM appadmin.ti_adm_ObjectOwner o WHERE TI_ADM_TRANSFORM.ObjectId = o.ObjectID AND o.isactive = 1 AND CHARINDEX(@tblname, transformquery) > 0;
 				
 		DELETE APPADMIN.ti_adm_ObjectAccessGrant WHERE ObjectID in (select objectid from appadmin.ti_adm_ObjectOwner where schemaname = @schmname and objectname = @tblname and objecttype ='TABLE') ;
 				
@@ -38,10 +42,15 @@ declare @prog varchar(100);
 		UPDATE appadmin.ti_adm_RegressionModels SET objectid = NULL WHERE OBJECTID = @ObjectID;
 
 		DELETE APPADMIN.ti_adm_ObjectOwner WHERE SChemaname = @schmname and objectname = @tblname and objecttype ='TABLE';
+
+	*/
 		--UPDATE APPADMIN.ti_adm_ObjectOwner SET ISACTIVE = 0 WHERE SChemaname = @schmname and objectname = @tblname and objecttype ='TABLE';
 
 	END
 END	
 GO
+
 ENABLE TRIGGER [ddl_trig_dropTable] ON DATABASE
 GO
+
+
