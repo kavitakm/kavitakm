@@ -16,6 +16,8 @@ Date		Change Description							Author
 07-oct-2020	 Enclose columnname  and AliasName with 
 		square brackets to allow column names with space Sunitha				
 05-Nov-2020	Increase precision to 20 to handle bigint	Srimathi
+06-Mar-2021	Bit datatype moved to category list from numerical	Srimathi
+12-Mar-2021	Tablename enclosed in square brackets to allow special characters in tablename
 *******************************************************************************/  
 --SET NOCOUNT ON  
 BEGIN TRY  
@@ -45,7 +47,8 @@ SELECT * INTO #ti_adm_SummaryStatistics FROM appadmin.ti_adm_SummaryStatistics W
   
 SELECT @Col1_DT = DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @SchemaName AND TABLE_NAME = @tableName AND COLUMN_NAME = replace(replace(@Column1Name,'[',''),']','')    
 SELECT @Col2_DT = DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = @SchemaName AND TABLE_NAME = @tableName AND COLUMN_NAME = replace(replace(@Column2Name,'[',''),']','')    
-  
+
+SET @TableName = '[' + replace(replace(@TableName,'[',''),']','') + ']'    
 SET @query = 'SELECT DISTINCT ''' + isnull(STR(@Object_id),'') + ''' AS ObjectId, ''' + @Column1Name + ''', case when ''' + @Col1_DT + ''' in (''NVARCHAR'',''VARCHAR'',''CHAR'',''NCHAR'',''DATE'',''DATETIME'',''SMALLDATETIME'') OR ''' + @col1NumorCat + ''' = ''C''  THEN isnull(CONVERT(NVARCHAR(4000),' + @Column1Name + '),''Null'') ELSE NULL END,  ''' + @Alias1Name + ''',  ''' + @Column2Name + ''', case when ''' + @Col2_DT + ''' in (''NVARCHAR'',''VARCHAR'',''CHAR'',''NCHAR'',''DATE'',''DATETIME'',''SMALLDATETIME'') OR ''' + @Col2NumOrCat + '''= ''C'' THEN isnull(CONVERT(NVARCHAR(4000),' + @Column2Name + '),''Null'') ELSE NULL END,  ''' +  @Alias2Name + ''', NULL AS CreatedDate, (SELECT userID FROM appadmin.ti_Adm_user_lu WHERE USerEMail=''' +@useremail + ''') AS CreatedBy, NULL as LastUpdatedDate,  (SELECT userID FROM appadmin.ti_Adm_user_lu WHERE USerEMail=''' + @useremail + ''') AS LastUpdatedBy,  1 AS IsActive  FROM ' + @SchemaName + '.' + @TableName;  
 --print @object_id  
   
@@ -65,7 +68,7 @@ INSERT INTO #ti_adm_SummaryStatistics(ObjectID, Column1Name, Column1Value, Colum
  --print 'Base row inserted'  
    
 /* Numerical - Numerical Combination */    
-IF (@Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') AND @Col1NumOrCat = 'N' AND @Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') and @Col2NumOrCat = 'N')    
+IF (@Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','numeric','small money','float','real','decimal') AND @Col1NumOrCat = 'N' AND @Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') and @Col2NumOrCat = 'N')    
 BEGIN    
 --PRINT 'N-N'  
  IF OBJECT_ID('tempdb.dbo.#Temp') Is Not Null    
@@ -85,11 +88,11 @@ ELSE
 /*Numerical - categorical Combination */    
     
 IF (  
- @Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal')   
+ @Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','numeric','small money','float','real','decimal')   
  AND @Col1NumOrCat ='N' )  
  AND (  
-  @Col2_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME') OR   
-  (@Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') AND @Col2NumOrCat = 'C')  
+  @Col2_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME','bit') OR   
+  (@Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','numeric','small money','float','real','decimal') AND @Col2NumOrCat = 'C')  
   )    
 BEGIN    
 -- PRINT 'N-C'  
@@ -171,13 +174,13 @@ ELSE
     
 --  PRINT 'ELSE'  
 IF (  
- @Col1_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME')   
- OR (@Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') AND @Col1NumOrCat = 'C')  
+ @Col1_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME','bit')   
+ OR (@Col1_Dt in ('Money','Int','TinyInt','bigint','smallint','numeric','small money','float','real','decimal') AND @Col1NumOrCat = 'C')  
  )   
  AND   
  (  
- @Col2_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME')   
- OR (@Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','bit','numeric','small money','float','real','decimal') AND @Col2NumOrCat = 'C')  
+ @Col2_DT in ('NVARCHAR','VARCHAR','CHAR','NCHAR','DATE','DATETIME','SMALLDATETIME','bit')   
+ OR (@Col2_Dt in ('Money','Int','TinyInt','bigint','smallint','numeric','small money','float','real','decimal') AND @Col2NumOrCat = 'C')  
  )     
 BEGIN    
   --PRINT 'C-C'  
@@ -228,4 +231,10 @@ END TRY
   SET @ErrSeverity=ERROR_SEVERITY()  
   RAISERROR(@ErrMsg,@Errseverity,1)  
 END CATCH  
-END
+END    
+    
+    
+    
+GO
+
+

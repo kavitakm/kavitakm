@@ -1,13 +1,15 @@
 ﻿CREATE PROCEDURE [AppAdmin].[ti_adm_CreateOrUpdateObjectOwner_sp]
-@ID INT, @ObjectName VARCHAR (200)
-, @ObjectType VARCHAR (50)
-, @SchemaName VARCHAR (50)
-, @ObjectLocation VARCHAR (200)
-, @FileExt VARCHAR (10)
-, @FileSize INT
-, @MaskedColumns VARCHAR (MAX)
-, @UserEmail VARCHAR (150)
-, @LoadType INT = 1
+	@ID INT
+	, @ObjectName VARCHAR (200)
+	, @ObjectType VARCHAR (50)
+	, @SchemaName VARCHAR (50)
+	, @ObjectLocation VARCHAR (200)
+	, @FileExt VARCHAR (10)
+	, @FileSize INT
+	, @MaskedColumns VARCHAR (MAX)
+	, @UserEmail VARCHAR (150)
+	, @LoadType INT = 1
+	, @FileDelimiter INT = null
 AS
 BEGIN
 
@@ -23,7 +25,8 @@ BEGIN
 28-02-2020	Srimathi	Favourite flag and TAIEnabled flag taken from existing Objectowner entry of the object (if exists) and moved to new entry
 26-08-2020	Srimathi	Added LoadType parameter
 14-12-2020	Srimathi	Owner id modified to be taken from previous entry of object
-
+04-01-2021	Srimathi	In case of updating object owner info, update status of active Summary statistics records to inactive (set isactive = 0)
+18-02-2021  Dinesh      File Delimiter Param added.
 *******************************************************/ 
 
     BEGIN TRY
@@ -95,10 +98,13 @@ BEGIN
                 IF (Upper(@ObjectType) = 'TABLE')
                 BEGIN
                     UPDATE [AppAdmin].[ti_adm_SummaryStatistics]
-                    SET    ISACTIVE        = 0,
-                            lastupdatedby   = @userid,
-                            LastUpdatedDate = getdate()
-                    WHERE  ObjectID = @ObjectID;
+                    SET
+						ISACTIVE        = 0,
+                        lastupdatedby   = @userid,
+						LastUpdatedDate = getdate()
+                    WHERE  
+						ObjectID = @ObjectID
+						AND ISACTIVE = 1;
                 END
                 UPDATE [AppAdmin].[ti_adm_ObjectAccessGrant]
                     SET    ISACTIVE        = 0,
@@ -106,8 +112,8 @@ BEGIN
                             LastUpdatedDate = getdate()
                     WHERE  ObjectID = @ObjectID;
             END
-            INSERT  INTO [AppAdmin].[ti_adm_ObjectOwner] (ObjectName, ObjectType, SchemaName, ObjectLocation, FileExt, FileSize, maskedColumns,CreatedDate, CreatedBy, LastUpdatedDate, LastUpdatedBy, IsActive, Favourite, TAI_Enabled, LoadType )
-            VALUES                                      (@ObjectName, @ObjectType, @SchemaName, @ObjectLocation, @FileExt, @FileSize, @MaskedColumns,GetDate(), @owner, GetDate(), @userid, 1,@fav_flag, @TAI_Enabled, @LoadType);
+            INSERT  INTO [AppAdmin].[ti_adm_ObjectOwner] (ObjectName, ObjectType, SchemaName, ObjectLocation, FileExt, FileSize, maskedColumns,CreatedDate, CreatedBy, LastUpdatedDate, LastUpdatedBy, IsActive, Favourite, TAI_Enabled, LoadType, FileDelimiterID )
+            VALUES                                      (@ObjectName, @ObjectType, @SchemaName, @ObjectLocation, @FileExt, @FileSize, @MaskedColumns,GetDate(), @owner, GetDate(), @userid, 1,@fav_flag, @TAI_Enabled, @LoadType,@FileDelimiter);
 			SET @ObjectID_new = SCOPE_IDENTITY()
             IF @flag = 1
             BEGIN
@@ -189,6 +195,14 @@ BEGIN
                     LastUpdatedBy   = @userid,
                     LastUpdatedDate = getdate()
             WHERE  ObjectId = @ID;
+
+			UPDATE [AppAdmin].[ti_adm_SummaryStatistics]
+                    SET    ISACTIVE        = 0,
+                            lastupdatedby   = @userid,
+                            LastUpdatedDate = getdate()
+                    WHERE  
+						ObjectID = @ID
+						AND ISACTIVE = 1
 			-- Added on 2/19/2020 to return objectid
 			SELECT @ID;
 		END
@@ -202,3 +216,7 @@ BEGIN
         RAISERROR (@ErrMsg, @Errseverity, 1);
     END CATCH
 END
+
+GO
+
+

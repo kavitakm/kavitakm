@@ -16,6 +16,7 @@ BEGIN
 ** Date					  : 21-Oct-2019    
  **Modification History
  **28/2/2020 Sunitha  Added delete logic to remove auto			                    bivariate statistics from                                ti_adm_bivariateTest_statisticDetails                     table
+ 31/3/2021	 Srimathi Drop table only if it exists - to handle backend deletes (enterprise data)
 
 *******************************************************************************/    
 DECLARE @userid int;  
@@ -58,7 +59,7 @@ DECLARE @str NVARCHAR(500);
 				DELETE APPADMIN.ti_adm_ObjectOwner WHERE SChemaname = @schemaname and objectname = @objectname and objecttype ='TABLE';
 
 				SET @log = 'dropping the table ' + @tblname;
-				SET @str = 'DROP TABLE ' + @tblname;
+				SET @str = 'DROP TABLE IF EXISTS ' + @tblname;
 				EXECUTE sp_executesql @str;
 			END
 		END
@@ -91,4 +92,7 @@ DECLARE @str NVARCHAR(500);
 	IF @@TRANCOUNT > 0  -- No errors caught
 		COMMIT TRANSACTION;
 
-END
+END  
+GO
+
+

@@ -9,7 +9,8 @@
  ,@Location Varchar(150) 
  ,@FileExt VARCHAR(10)
  ,@TransactionType Varchar(15)  
- ,@UserEmail Varchar(150)        
+ ,@UserEmail Varchar(150)
+ ,@LoadType Int
 AS         
 BEGIN        
  /**************************************************************************  
@@ -28,6 +29,11 @@ BEGIN
 ** Modification Hist: 
 1/22/2020   Srimathi	Added FileExt parameter for output file
 2/29/2020	Srimathi	Added favourite and TAI_Enabled flag in insert statement (Objectowner)
+12/28/2020	Sunitha		Added LoadType in insert statement(Objectowner)
+1/29/2020	Harini      Modified the insert statement(Objectowner) for Cleanse with the below changes:-
+						a) Added favourite,TAI_Enabled,LoadType, 
+						b) Corrected the BEGIN-END, 
+						c) Changed value of ObjectName param from @OutputName to @TransformName
 **              
 *******************************************************************************/  
 --SET NOCOUNT ON  
@@ -53,14 +59,17 @@ BEGIN TRY
   
  IF ( UPPER(@TransactionType) IN ('TRANSFORM','CLEANSE'))  
   BEGIN  
-   INSERT INTO [AppAdmin].[ti_adm_ObjectOwner] (ObjectName,ObjectType,SchemaName,ObjectLocation,CreatedDate,LastUpdatedDate,IsActive,FileExt,FileSize,createdBy,LastupdatedBy, favourite, TAI_Enabled)  
-   VALUES( @TransformName, @TransactionType , '', '', getdate(), getdate(), 1, '', '', @UserID ,@UserID,0,0)  
-  END  
- ELSE  
-  BEGIN  
-   INSERT INTO [AppAdmin].[ti_adm_ObjectOwner] (ObjectName,ObjectType,SchemaName,ObjectLocation,CreatedDate,LastUpdatedDate,IsActive,FileExt,FileSize,createdBy,LastupdatedBy)  
-   VALUES( @OutputName, @TransactionType , '', '', getdate(), getdate(), 1, '', '', @UserID ,@UserID)  
-  END  
+   IF UPPER(@TransactionType)='TRANSFORM'
+	BEGIN
+	   INSERT INTO [AppAdmin].[ti_adm_ObjectOwner] (ObjectName,ObjectType,SchemaName,ObjectLocation,CreatedDate,LastUpdatedDate,IsActive,FileExt,FileSize,createdBy,LastupdatedBy, favourite,TAI_Enabled,LoadType)  
+	   VALUES( @TransformName, @TransactionType , '', '', getdate(), getdate(), 1, '', '', @UserID ,@UserID,0,0,@LoadType)  
+	END  
+   ELSE  
+	BEGIN  
+	   INSERT INTO [AppAdmin].[ti_adm_ObjectOwner] (ObjectName,ObjectType,SchemaName,ObjectLocation,CreatedDate,LastUpdatedDate,IsActive,FileExt,FileSize,createdBy,LastupdatedBy, favourite,TAI_Enabled,LoadType)  
+	   VALUES( @TransformName, @TransactionType , '', '', getdate(), getdate(), 1, '', '', @UserID ,@UserID,0,0,@LoadType)  
+	END  
+  END
   
  SET @OBjectID =SCOPE_IDENTITY()  
    
@@ -77,4 +86,7 @@ END TRY
   RAISERROR(@ErrMsg,@Errseverity,1)  
 END CATCH  
    
- END
+ END  
+GO
+
+

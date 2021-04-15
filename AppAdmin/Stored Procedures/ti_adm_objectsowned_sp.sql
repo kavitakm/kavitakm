@@ -1,4 +1,5 @@
-﻿--Exec [AppAdmin].[ti_adm_objectsowned_sp] 'srimathi@tesserinsights.com'
+﻿
+--Exec [AppAdmin].[ti_adm_objectsowned_sp] 'srimathi@tesserinsights.com'
 CREATE   PROC [AppAdmin].[ti_adm_objectsowned_sp] 
 	@userEmail		 VARCHAR(100)
 AS     
@@ -7,10 +8,11 @@ BEGIN
 ** Version               : 1.0               
 ** Author                : Sunitha        
 ** Description           : get the list of objects owned by user
-** Date					 : 16-12-2019      
+** Date					 : 19-01-2021      
 
 Version		Date		ChangedBy	ChangeDescr
 1.1			2/17/2020	Srimathi	Added schemaID, audit columns in output. Used ti_adm_getUserID_fn to fetch userid
+1.2			1/19/2021	Guru		Added Workspace_GUID,Object_GUID.
 *******************************************************/
 DECLARE @UserID int
 SELECT @UserId = appadmin.ti_adm_getUserID_fn(@userEmail)
@@ -23,6 +25,8 @@ SELECT
 	,ObjectType
 	,objectlocation
 	,@userEmail createdBy
+	,o.Object_GUID
+	,o.Workspace_GUID
 	,o.CreatedDate 
 	,updatedBy.userEmail LastUpdatedBy
 
